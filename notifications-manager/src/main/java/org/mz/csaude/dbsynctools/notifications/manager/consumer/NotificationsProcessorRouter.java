@@ -1,7 +1,7 @@
 package org.mz.csaude.dbsynctools.notifications.manager.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.mz.csaude.dbsynctools.notifications.manager.repository.EmailNotificationLogRepository;
+import org.mz.csaude.dbsynctools.notifications.manager.service.EmailNotificationLogService;
 import org.mz.csaude.dbsynctools.notifications.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsynctools.notifications.manager.utils.CommonConverter;
 import org.mz.csaude.dbsynctools.notifications.manager.utils.MailConfig;
@@ -31,19 +31,19 @@ public class NotificationsProcessorRouter extends RouteBuilder {
 	private String password;
 
 	@Autowired
-	private EmailNotificationLogRepository emailNotificationLogRepository;
+	private EmailNotificationLogService emailNotificationLogService;
 
 	@Autowired
 	private CommonConverter commonConverter;
 
 	@Override
-	public void configure() throws Exception {
+	public void configure() {
 		String srcUri = notificationsEndpoint;
 		String dstUri = "log:mylog";
 
 		MailConfig mailConfig = new MailConfig(host, port, username, password);
 		from(srcUri)
-				.process(new NotificationMessageProcessor(mailConfig, emailNotificationLogRepository, commonConverter ))
+				.process(new NotificationMessageProcessor(mailConfig, emailNotificationLogService, commonConverter ))
 				.to(dstUri);
 	}
 }
