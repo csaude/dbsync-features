@@ -1,13 +1,13 @@
-package org.mz.csaude.dbsynctools.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
 
 import java.time.LocalDateTime;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.mz.csaude.dbsynctools.notifications.manager.consumer.NotificationsProcessorRouter;
-import org.mz.csaude.dbsynctools.notifications.manager.model.EmailNotificationLog;
-import org.mz.csaude.dbsynctools.notifications.manager.model.NotificationInfo;
-import org.mz.csaude.dbsynctools.notifications.manager.service.EmailNotificationLogService;
+import org.mz.csaude.dbsynfeatures.notifications.manager.consumer.NotificationsProcessorRouter;
+import org.mz.csaude.dbsynfeatures.notifications.manager.model.EmailNotificationLog;
+import org.mz.csaude.dbsynfeatures.notifications.manager.model.NotificationInfo;
+import org.mz.csaude.dbsynfeatures.notifications.manager.service.EmailNotificationLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

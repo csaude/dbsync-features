@@ -4,14 +4,7 @@ import java.io.IOException;
 
 import javax.mail.MessagingException;
 import org.junit.jupiter.api.Test;
-import org.mz.csaude.dbsynctools.notifications.manager.model.NotificationInfo;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.CommonConverter;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.MailConfig;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.NotificationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 @SpringBootTest
 class NotificationServiceTests {

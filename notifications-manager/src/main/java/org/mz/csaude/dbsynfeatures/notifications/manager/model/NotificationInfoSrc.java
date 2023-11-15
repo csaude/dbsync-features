@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynctools.notifications.manager.model;
+package org.mz.csaude.dbsynfeatures.notifications.manager.model;
 
 import java.io.File;
 import java.io.FileInputStream;

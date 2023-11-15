@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynctools.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Converter;

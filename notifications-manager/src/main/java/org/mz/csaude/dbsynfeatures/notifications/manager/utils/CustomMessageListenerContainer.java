@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynctools.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
 
 import javax.jms.JMSException;
 import javax.jms.Message;

@@ -1,8 +1,8 @@
-package org.mz.csaude.dbsynctools.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.mz.csaude.dbsynctools.notifications.manager.model.NotificationInfo;
+import org.mz.csaude.dbsynfeatures.notifications.manager.model.NotificationInfo;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

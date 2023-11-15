@@ -1,16 +1,16 @@
-package org.mz.csaude.dbsynctools.notifications.manager.consumer;
+package org.mz.csaude.dbsynfeatures.notifications.manager.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.mz.csaude.dbsynctools.notifications.manager.service.EmailNotificationLogService;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.ApplicationProfile;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.CommonConverter;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.MailConfig;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.NotificationMessageProcessor;
+import org.mz.csaude.dbsynfeatures.notifications.manager.service.EmailNotificationLogService;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.CommonConverter;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.MailConfig;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.NotificationMessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.CustomMessageListenerContainer;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.CustomMessageListenerContainer;
 
 @Component
 @Profile(ApplicationProfile.CONSUMER)

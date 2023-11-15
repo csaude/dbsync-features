@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynctools.notifications.manager.publisher;
+package org.mz.csaude.dbsynfeatures.notifications.manager.publisher;
 
 import java.io.IOException;
 
@@ -6,9 +6,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
-import org.mz.csaude.dbsynctools.notifications.manager.model.NotificationInfo;
-import org.mz.csaude.dbsynctools.notifications.manager.model.NotificationInfoSrc;
-import org.mz.csaude.dbsynctools.notifications.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsynfeatures.notifications.manager.model.NotificationInfo;
+import org.mz.csaude.dbsynfeatures.notifications.manager.model.NotificationInfoSrc;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.ApplicationProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;

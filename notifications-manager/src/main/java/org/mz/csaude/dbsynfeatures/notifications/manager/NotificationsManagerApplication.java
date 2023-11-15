@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynctools.notifications.manager;
+package org.mz.csaude.dbsynfeatures.notifications.manager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
