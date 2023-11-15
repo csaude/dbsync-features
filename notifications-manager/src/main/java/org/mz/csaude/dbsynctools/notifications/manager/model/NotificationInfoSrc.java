@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.UUID;
 
 /**
  * The Source of notification
@@ -106,7 +107,8 @@ public class NotificationInfoSrc {
 		notificationInfo.setMailSubject(mailSubject);
 		notificationInfo.setMailSiteOrigin(mailSiteOrigin);
 		notificationInfo.setSrcFolderPath(this.getNotificationContentPath());
-		
+		notificationInfo.setMessageUuid(UUID.randomUUID().toString());
+
 		return notificationInfo;
 	}
 }

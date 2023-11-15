@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.mz.csaude.dbsynctools.notifications.manager.utils.CustomMessageListenerContainer;
 
 @Component
 @Profile(ApplicationProfile.CONSUMER)
@@ -44,7 +45,13 @@ public class NotificationsProcessorRouter extends RouteBuilder {
 		MailConfig mailConfig = new MailConfig(host, port, username, password);
 		from(srcUri)
 				.process(new NotificationMessageProcessor(mailConfig, emailNotificationLogService, commonConverter ))
-				.to(dstUri);
+				.to(dstUri)
+					.onCompletion()
+					.onCompleteOnly()
+					.process( exchange -> {
+						CustomMessageListenerContainer.enableAcknowledgement();
+				})
+				.end();
 	}
 }
 

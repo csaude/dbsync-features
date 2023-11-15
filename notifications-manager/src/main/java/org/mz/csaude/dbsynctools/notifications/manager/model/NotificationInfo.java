@@ -20,6 +20,8 @@ public class NotificationInfo {
 	private String mailSiteOrigin;
 	
 	private String srcFolderPath;
+
+	private String messageUuid;
 	
 	public NotificationInfo() {
 	}
@@ -80,7 +82,15 @@ public class NotificationInfo {
 	public void setSrcFolderPath(String srcFolderPath) {
 		this.srcFolderPath = srcFolderPath;
 	}
-	
+
+	public void setMessageUuid(String messageUuid) {
+		this.messageUuid = messageUuid;
+	}
+
+	public String getMessageUuid() {
+		return messageUuid;
+	}
+
 	@Override
 	public String toString() {
 		return "Mail: [subject:" + mailSubject + ", to: " + mailRecipients + "]";

@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
  * ever goes unprocessed. Message acknowledgement is enabled only when the following happen,
  * 
  * <pre>
- * 1. A message is successfully synced to the receiver OpenMRS database
- * 2. If a message is saved to the receiver retry queue.
- * 3. If a message is saved to the receiver conflict queue.
- * 4. If a sync request is saved to the sender_sync_request table
+ * 1. A email notification is successfully sent to the recipient
  * </pre>
  */
 public class CustomMessageListenerContainer extends DefaultJmsMessageListenerContainer {

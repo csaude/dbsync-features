@@ -42,13 +42,13 @@ public class NotificationMessageProcessor implements Processor {
             NotificationService notificationService = new NotificationService(this.mailConfig);
             notificationService.emailService(notificationInfo);
             log.info("Notification Message for site: " + notificationInfo.getMailSiteOrigin() + "for type " + notificationInfo.getMailSubject() + " were delivered successfully to user" );
-            CustomMessageListenerContainer.enableAcknowledgement();
 
             EmailNotificationLog emailNotificationLog = new EmailNotificationLog();
             emailNotificationLog.setMessageType(notificationInfo.getMailSubject());
             emailNotificationLog.setDateSent(LocalDateTime.now());
             emailNotificationLog.setSubject(notificationInfo.getMailSubject());
             emailNotificationLog.setSiteId(notificationInfo.getMailSiteOrigin());
+            emailNotificationLog.setMessageUuid(notificationInfo.getMessageUuid());
 
             emailNotificationLogService.createEntity(emailNotificationLog);
         } catch (Exception e){

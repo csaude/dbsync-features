@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface EmailNotificationLogRepository extends JpaRepository<EmailNotificationLog, Integer> {
+    EmailNotificationLog findByMessageUuid(String messageUuid);
 }

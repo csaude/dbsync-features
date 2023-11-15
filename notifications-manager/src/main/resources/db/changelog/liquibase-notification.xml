@@ -30,6 +30,9 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 			<column name="date_sent" type="DATETIME(3)">
 				<constraints nullable="false"/>
 			</column>
+			<column name="message_uuid" type="VARCHAR(255)">
+				<constraints unique="true"/>
+			</column>
 		</createTable>
 
 	</changeSet>

@@ -19,6 +19,9 @@ public class EmailNotificationLog {
     @Id
     private Long id;
 
+    @Column(name = "message_uuid")
+    private String messageUuid;
+
     @NotNull
     @Column(name = "site_id")
     private String siteId;
@@ -73,5 +76,13 @@ public class EmailNotificationLog {
 
     public Long getId() {
         return id;
+    }
+
+    public void setMessageUuid(String messageUuid) {
+        this.messageUuid = messageUuid;
+    }
+
+    public String getMessageUuid() {
+        return messageUuid;
     }
 }
