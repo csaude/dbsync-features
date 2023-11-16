@@ -3,6 +3,9 @@ package org.mz.csaude.dbsynfeatures.notifications.manager.model;
 import java.time.LocalDateTime;
 
 import com.sun.istack.NotNull;
+import org.mz.csaude.dbsynfeatures.notifications.manager.utils.ApplicationProfile;
+import org.springframework.context.annotation.Profile;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +16,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "email_notification_log")
+@Profile(ApplicationProfile.CONSUMER)
 public class EmailNotificationLog {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
