@@ -1,5 +1,6 @@
 package org.mz.csaude.dbsynfeatures.notifications.manager.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mz.csaude.dbsynfeatures.notifications.manager.model.EmailNotificationLog;
 import org.mz.csaude.dbsynfeatures.notifications.manager.repository.EmailNotificationLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ public class EmailNotificationLogService {
     private EmailNotificationLogRepository emailNotificationLogRepository ;
 
     public void createEntity(EmailNotificationLog emailNotificationLog) {
-        if (!emailNotificationLog.getMessageUuid().isEmpty()) {
+        if (!StringUtils.isEmpty(emailNotificationLog.getMessageUuid())) {
             try {
                 emailNotificationLogRepository.save(emailNotificationLog);
             } catch (DataIntegrityViolationException ex) {
