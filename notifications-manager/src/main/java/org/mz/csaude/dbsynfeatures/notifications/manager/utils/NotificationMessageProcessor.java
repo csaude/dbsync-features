@@ -40,8 +40,6 @@ public class NotificationMessageProcessor implements Processor {
             NotificationInfo notificationInfo = commonConverter.fromJson(messageBody, NotificationInfo.class);
             exchange.getIn().setBody(notificationInfo);
             NotificationService notificationService = new NotificationService(this.mailConfig);
-            notificationService.emailService(notificationInfo);
-            log.info("Notification Message for site: " + notificationInfo.getMailSiteOrigin() + "for type " + notificationInfo.getMailSubject() + " were delivered successfully to user" );
 
             EmailNotificationLog emailNotificationLog = new EmailNotificationLog();
             emailNotificationLog.setMessageType(notificationInfo.getMailSubject());
@@ -49,8 +47,10 @@ public class NotificationMessageProcessor implements Processor {
             emailNotificationLog.setSubject(notificationInfo.getMailSubject());
             emailNotificationLog.setSiteId(notificationInfo.getMailSiteOrigin());
             emailNotificationLog.setMessageUuid(notificationInfo.getMessageUuid());
-
             emailNotificationLogService.createEntity(emailNotificationLog);
+
+            notificationService.emailService(notificationInfo);
+            log.info("Notification Message for site: " + notificationInfo.getMailSiteOrigin() + "for type " + notificationInfo.getMailSubject() + " were delivered successfully to user" );
         } catch (Exception e){
             log.error("An error occurred trying to process message: " + e.getMessage());
             log.error(e.getCause().toString());
