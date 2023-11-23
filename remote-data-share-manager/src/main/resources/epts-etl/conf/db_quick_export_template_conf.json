@@ -1,0 +1,159 @@
+{
+	processType: "DB_QUICK_EXPORT",
+    modelType: "OPENMRS",
+	
+	syncRootDirectory: "/home/eip/application/eptssync",
+	classPath: "/home/eip/application/eptssync/epts-etl-api-1.0.jar",
+	
+	syncRootDirectory: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\data\\quick-export",
+	classPath: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\openmrs-module-epts-etl\\api\\target\\original-epts-etl-api-1.0.jar",
+	
+	originAppLocationCode: "origin_app_location_code",
+	firstExport: false,
+	automaticStart: true, 
+	resumable: true,
+	observationDate: observation_date,
+	finalizerFullClassName: "org.openmrs.module.epts.etl.dbquickexport.controller.DbQuickExportFinalizer",
+
+	appsInfo:[
+
+		{
+			applicationCode: "main",
+			pojoPackageName: "openmrs._default",
+			connInfo: {
+				dataBaseUserName: "openmrs_user_name",
+				dataBaseUserPassword: "openmrs_user_password",
+				connectionURI: "jdbc:mysql://openmrs_db_host:openmrs_db_port/openmrs_db_name?autoReconnect=true&useSSL=false",
+				driveClassName: "com.mysql.cj.jdbc.Driver"
+			}
+		}
+	],
+	
+	operations: [
+		 	{
+				operationType: "DB_QUICK_EXPORT",
+				maxRecordPerProcessing: 1000,
+				maxSupportedEngines: 1,
+				minRecordsPerEngine: 1000,
+				disabled: false,
+				processingMode: "sequencial"
+			}
+
+	],
+	
+	tablesConfigurations: [
+		{
+			tableName: "person",
+			parents: [{tableName: "users", defaultValueDueInconsistency: 1}],
+			observationDateFields: ["date_changed", "date_voided"]
+		}
+	],
+	
+	tablesConfigurations_: [
+			{	
+				tableName: "users",
+				parents: [{tableName: "person", defaultValueDueInconsistency: 1}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				removeForbidden: true,
+				observationDateFields: ["date_changed", "date_retired"]
+			},
+			
+			{
+				tableName: "person",
+				parents: [{tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "location",
+				parents: [{tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_retired"]
+			},
+			
+			{
+				tableName: "patient",
+				sharePkWith: "person",
+				parents: [{tableName: "person"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "patient_program",
+				parents: [{tableName: "patient"}, {tableName: "location"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "person_address",
+				parents: [{tableName: "person"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			{
+					tableName: "person_attribute",
+					parents: [{tableName: "person"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+					conditionalParents: [{tableName: "location", refColumnName: "value", conditionField: "person_attribute_type_id", conditionValue: "7"}],
+					observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "person_name",
+				parents: [{tableName: "person"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "relationship",
+				parents: [{tableName: "person"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			
+			{
+				tableName: "patient_identifier",
+				parents: [{tableName: "patient"}, {tableName: "location"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "patient_state",
+				parents: [{tableName: "patient_program"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "visit",
+				parents: [{tableName: "patient"}, {tableName: "location"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "visit_attribute",
+				parents: [{tableName: "visit"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+		
+			{
+				tableName: "provider",
+				parents: [{tableName: "person"}, {tableName: "users", defaultValueDueInconsistency: 1}],
+				observationDateFields: ["date_changed", "date_retired"]
+			},
+			
+			{
+				tableName: "encounter",
+				parents: [{tableName: "patient"}, {tableName: "location"}, {tableName: "users", defaultValueDueInconsistency: 1}, {tableName: "visit"}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+				
+			{
+				tableName: "encounter_provider",
+				parents: [{tableName: "encounter"}, {tableName: "provider"}, {tableName: "users", defaultValueDueInconsistency: 1}, {tableName: "visit"}],
+				observationDateFields: ["date_changed", "date_voided"]
+			},
+			
+			{
+				tableName: "obs",
+				parents: [{tableName: "person"}, {tableName: "location"}, {tableName: "orders"}, {tableName: "obs", setNullDueInconsistency: true}, {tableName: "encounter"}, {tableName: "users", defaultValueDueInconsistency: 1}, {tableName: "visit"}],
+				observationDateFields: ["date_voided"]
+			}
+			
+	]
+}
