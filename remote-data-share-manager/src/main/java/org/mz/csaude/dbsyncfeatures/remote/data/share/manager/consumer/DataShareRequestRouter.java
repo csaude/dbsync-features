@@ -36,6 +36,7 @@ public class DataShareRequestRouter extends RouteBuilder {
 	        	.when().simple("${body.size()} == 0")
 	        	  	.log("No site found for request data")
 	        	  	.setProperty("doLoop", simple("false"))
+	        	.endChoice()
 				.otherwise()	
 					.log("Found ${body.size()} site(s) for request data")
 	        		.split(body())
@@ -48,7 +49,8 @@ public class DataShareRequestRouter extends RouteBuilder {
 	        		.json(JsonLibrary.Jackson, RemoteDataShareInfo.class)
 	        		.bean(dataShareInfoManager, "updateRemoteDataShareInfo")
 	        	 .endChoice()
-	        .end();
+	        .end()
+	    .end();
 	}
 	
 }
