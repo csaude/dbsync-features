@@ -1,6 +1,8 @@
 package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParser.Feature;
@@ -46,6 +48,17 @@ public class Utils {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	
+	public static <T> T loadObjectFormJSON(Class<T> clazz, File jsonFile) {
+		try {
+			return loadObjectFormJSON(clazz, new String(Files.readAllBytes(jsonFile.toPath())));
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 	
 }

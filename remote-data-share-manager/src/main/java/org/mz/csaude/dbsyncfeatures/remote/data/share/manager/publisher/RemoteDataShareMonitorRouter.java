@@ -29,10 +29,10 @@ public class RemoteDataShareMonitorRouter extends RouteBuilder {
 	
 	@Override
 	public void configure() throws Exception {
-		String monitorFolder = Commons.getShareMonitorFile().getParent();
+		String monitorFolder = DataShareCommons.getShareMonitorFile().getParent();
 		
 		
-		String srcUri = "file:" + monitorFolder + "?fileName=" + Commons.getShareMonitorFile().getName();
+		String srcUri = "file:" + monitorFolder + "?fileName=" + DataShareCommons.getShareMonitorFile().getName();
 		
 		String dstUri = notificationsEndpoint;
 		from(srcUri)

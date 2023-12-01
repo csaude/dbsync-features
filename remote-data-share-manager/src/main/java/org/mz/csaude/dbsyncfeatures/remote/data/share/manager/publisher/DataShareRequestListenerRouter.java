@@ -1,23 +1,19 @@
 package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.publisher;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.util.FileUtil;
-import org.apache.commons.io.IOUtils;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
+import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.Utils;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.DataShareInfoManager;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
+import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +40,12 @@ public class DataShareRequestListenerRouter extends RouteBuilder {
 	@Autowired
 	private DataShareMonitor shareMonitor;
 	
+	@Value("${epts-etl.home.dir:}")
+	private String eptsEtlHomeDir;
+	
+	@Autowired
+	private DataShareCommons commons;
+	
 	@Override
 	public void configure() throws Exception {
 		dataShareInfoManager.setCurrentOriginLocation(senderId);
@@ -64,11 +66,15 @@ public class DataShareRequestListenerRouter extends RouteBuilder {
 	        .onCompletion()
 			.onCompleteOnly()
 			.process(exchange -> {CustomMessageListenerContainer.enableAcknowledgement();})
-			.to("direct:init-share-monitor")
+			.to("file:"+commons.getShareMonitorFilePath())
         .end();
 		
-		from("direct:init-share-monitor")
-			.bean(shareMonitor);
+		int delay = 1000*60;
+		int period = 1000*60*5;
+		
+		from("timer:data-share-monitor?delay=" + delay + "&period=" + period)
+			.log(artemisEndPoint)
+			.bean(shareMonitor, "doMonitoring");
 	}
 }
 
@@ -76,15 +82,45 @@ public class DataShareRequestListenerRouter extends RouteBuilder {
 @Component
 class DataShareMonitor {
 	
+	@Value("${epts-etl.home.dir:}")
+	private String eptsEtlHomeDir;
+	
+	@Autowired
+	private DataShareCommons commons;
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	/**
 	 * Create a sign for monitor route start its job
+	 * 
 	 * @param dataShareInfo
 	 */
-	public void initMonitoring(RemoteDataShareInfo dataShareInfo) {
+	public void doMonitoring() {
 		try {
-			FileUtil.createNewFile(new File(Commons.getShareMonitorFilePath()));
+			File monitoringFile = new File(commons.getShareMonitorFilePath());
+			
+			//If the monitoring file exists, mean that there were initialized a process but the process was not finalized yet
+			if (monitoringFile.exists()) {
+				
+				ProcessStarter p = new ProcessStarter(new String[] { commons.getSyncConfigurationFilePath(eptsEtlHomeDir) });
+				p.init();
+				
+				//This mean the process is finished, so lets remove the monitoring file
+				if (p.getCurrentController().processIsAlreadyFinished()) {
+					FileUtil.deleteFile(monitoringFile);
+				} else {
+					//The process has not finished. Let check if it is running
+					
+					if (commons.getDataExportProcessStarter() == null) {
+						commons.startExportProcess(Utils.loadObjectFormJSON(null, eptsEtlHomeDir), logger);
+					}
+				}
+			}
 		}
-		catch (IOException e) {
+		catch (DBException e) {
+			throw new RuntimeException(e);
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -96,66 +132,13 @@ class DataShareStarter implements Processor {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@Value("${db-sync.senderId}")
-	private String senderId;
-	
-	@Value("${openmrs.db.host}")
-	private String openmrsDbHost;
-	
-	@Value("${openmrs.db.port}")
-	private String openmrsDbPort;
-	
-	@Value("${openmrs.db.name}")
-	private String openmrsDbName;
-	
-	@Value("${spring.openmrs-datasource.password}")
-	private String openmrsDbPassword;
-	
-	@Value("${spring.openmrs-datasource.username}")
-	private String openmrsDbUser;
+	@Autowired
+	DataShareCommons commons;
 	
 	@Override
 	public void process(Exchange exchange) throws Exception {
 		RemoteDataShareInfo dataShareInfo = (RemoteDataShareInfo) exchange.getMessage().getBody();
 		
-		logger.info("Starting data-share....");
-		
-		//String eptssyncPath="/home/eip/application/eptssync/eptssync-api-1.0.jar";
-		//String eptsEtlHome = "/home/eip/application/eptssync/";
-		
-		String eptsEtlHome = "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\";
-		
-		File eptsEtlConf = new File(eptsEtlHome + File.separator + "conf" + File.separator + "db-quick-export.json");
-		
-		FileUtil.copyFile(Commons.getSyncConfigurationFile(), eptsEtlConf);
-		
-		replaceAllInFile(eptsEtlConf, "origin_app_location_code", senderId);
-		replaceAllInFile(eptsEtlConf, "openmrs_db_host", openmrsDbHost);
-		replaceAllInFile(eptsEtlConf, "openmrs_db_port", openmrsDbPort);
-		replaceAllInFile(eptsEtlConf, "openmrs_db_name", openmrsDbName);
-		replaceAllInFile(eptsEtlConf, "openmrs_user_password", openmrsDbPassword);
-		replaceAllInFile(eptsEtlConf, "openmrs_user_name", openmrsDbUser);
-		replaceAllInFile(eptsEtlConf, "observation_date", "" + dataShareInfo.getRequestDate().getTime());
-		
-		try {
-			ProcessStarter p = new ProcessStarter(new String[] { eptsEtlConf.getAbsolutePath() }, logger);
-			p.run();
-		}
-		catch (IOException e) {}
-		
+		commons.startExportProcess(dataShareInfo, logger);
 	}
-	
-	public static void replaceAllInFile(File file, String toFind, String replacement) {
-		try {
-			Charset charset = StandardCharsets.UTF_8;
-			
-			String content = IOUtils.toString(new FileInputStream(file), charset);
-			content = content.replaceAll(toFind, replacement);
-			IOUtils.write(content, new FileOutputStream(file), charset);
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
 }
