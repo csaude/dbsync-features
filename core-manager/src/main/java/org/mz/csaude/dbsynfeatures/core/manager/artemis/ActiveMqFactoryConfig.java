@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.core.manager.artemis;
 
 import javax.jms.ConnectionFactory;
 

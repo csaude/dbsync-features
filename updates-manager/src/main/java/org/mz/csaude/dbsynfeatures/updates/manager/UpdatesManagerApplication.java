@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynfeatures.notifications.manager;
+package org.mz.csaude.dbsynfeatures.updates.manager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,10 +9,10 @@ import org.springframework.context.annotation.ComponentScans;
 @ComponentScans({
 		@ComponentScan("org.mz.csaude.dbsynfeatures.core.manager"),
 })
-public class NotificationsManagerApplication {
+public class UpdatesManagerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(NotificationsManagerApplication.class, args);
+		SpringApplication.run(UpdatesManagerApplication.class, args);
 	}
 
 }

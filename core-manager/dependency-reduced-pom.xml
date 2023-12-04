@@ -7,11 +7,11 @@
     <relativePath>pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.mz.csaude.dbsync-tools</groupId>
-  <artifactId>notifications-manager</artifactId>
-  <name>notifications-manager</name>
+  <groupId>org.mz.csaude.dbsync-features.core</groupId>
+  <artifactId>core-manager</artifactId>
+  <name>core-manager</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Dbsync Notification Manager</description>
+  <description>Dbsync Core Manager</description>
   <build>
     <resources>
       <resource>
@@ -24,7 +24,7 @@
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
-            <id>notifications-manager</id>
+            <id>core-manager</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -33,7 +33,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer>
-                  <mainClass>org.mz.csaude.dbsynfeatures.notifications.manager.NotificationsManagerApplication</mainClass>
+                  <mainClass>org.mz.csaude.dbsynfeatures.core.manager.NotificationsManagerApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -43,12 +43,6 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.mz.csaude.dbsync-features.core</groupId>
-      <artifactId>core-manager</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -178,6 +172,12 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
       <version>4.22.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>0.1.55</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

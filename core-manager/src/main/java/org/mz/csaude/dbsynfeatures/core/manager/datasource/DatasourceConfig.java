@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.core.manager.datasource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

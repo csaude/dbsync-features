@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.core.manager.datasource;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.lang3.StringUtils;
