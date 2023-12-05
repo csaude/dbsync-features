@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -42,6 +43,7 @@ public class RemoteDataInfo {
 		this.tableName = tableName;
 	}
 	
+	@JsonIgnore
 	public boolean isEmpty() {
 		return this.qtyRecords == 0;
 	}

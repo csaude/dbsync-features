@@ -7,4 +7,15 @@ public final class ApplicationProfile {
 	
 	public static final String PUBLISHER = "publisher";
 	public static final String CONSUMER = "consumer";
+	
+	
+	public static boolean isCentral(String profile) {
+		return profile.equals(ApplicationProfile.CONSUMER);
+	}
+	
+	public static boolean isRemote(String profile) {
+		return profile.equals(ApplicationProfile.PUBLISHER);
+	}
+	
+	
 }

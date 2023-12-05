@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.consumer;
+package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.site.central;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile(ApplicationProfile.CONSUMER)
-public class DataShareRequestRouter extends RouteBuilder {
+public class RemoteDataRequestRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")
 	private String artemisEndPoint;

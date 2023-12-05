@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.publisher;
+package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.site.remote;
 
 import java.io.File;
 
@@ -7,11 +7,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.util.FileUtil;
+import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareCommons;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
-import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.Utils;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.DataShareInfoManager;
+import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
 import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile(ApplicationProfile.PUBLISHER)
-public class DataShareRequestListenerRouter extends RouteBuilder {
+public class RemoteDataRequestListenerRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")
 	private String artemisEndPoint;
@@ -38,13 +39,10 @@ public class DataShareRequestListenerRouter extends RouteBuilder {
 	private DataShareStarter shareStarter;
 	
 	@Autowired
-	private DataShareMonitor shareMonitor;
+	private RemoteDataShareProcessMonitor shareMonitor;
 	
-	@Value("${epts-etl.home.dir:}")
+	@Value("${epts-etl.home.dir}")
 	private String eptsEtlHomeDir;
-	
-	@Autowired
-	private DataShareCommons commons;
 	
 	@Override
 	public void configure() throws Exception {
@@ -65,11 +63,13 @@ public class DataShareRequestListenerRouter extends RouteBuilder {
 	        .end()
 	        .onCompletion()
 			.onCompleteOnly()
-			.process(exchange -> {CustomMessageListenerContainer.enableAcknowledgement();})
-			.to("file:"+commons.getShareMonitorFilePath())
+			.process(exchange -> {
+									 	CustomMessageListenerContainer.enableAcknowledgement();
+								  }
+				)
         .end();
 		
-		int delay = 1000*60;
+		int delay = 1000*60*1;
 		int period = 1000*60*5;
 		
 		from("timer:data-share-monitor?delay=" + delay + "&period=" + period)
@@ -80,13 +80,14 @@ public class DataShareRequestListenerRouter extends RouteBuilder {
 
 //@formatter:on
 @Component
-class DataShareMonitor {
+@Profile(ApplicationProfile.PUBLISHER)
+class RemoteDataShareProcessMonitor {
 	
-	@Value("${epts-etl.home.dir:}")
+	@Value("${epts-etl.home.dir}")
 	private String eptsEtlHomeDir;
 	
 	@Autowired
-	private DataShareCommons commons;
+	private RemoteDataShareCommons commons;
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -97,6 +98,9 @@ class DataShareMonitor {
 	 */
 	public void doMonitoring() {
 		try {
+			
+			logger.info("Performing Data Request monitoring actions");
+			
 			File monitoringFile = new File(commons.getShareMonitorFilePath());
 			
 			//If the monitoring file exists, mean that there were initialized a process but the process was not finalized yet
@@ -107,14 +111,22 @@ class DataShareMonitor {
 				
 				//This mean the process is finished, so lets remove the monitoring file
 				if (p.getCurrentController().processIsAlreadyFinished()) {
+					logger.info("The share process is finihed...! Removing the monitoring file...");
+					
 					FileUtil.deleteFile(monitoringFile);
 				} else {
 					//The process has not finished. Let check if it is running
 					
 					if (commons.getDataExportProcessStarter() == null) {
-						commons.startExportProcess(Utils.loadObjectFormJSON(null, eptsEtlHomeDir), logger);
+						logger.info("The data share was requested but no share process is running. Force staring...");
+						
+						commons.startExportProcess(Utils.loadObjectFormJSON(RemoteDataShareInfo.class, monitoringFile),
+						    logger);
 					}
 				}
+			}
+			else {
+				logger.info("No monitoring file exists! Nothing to do!");
 			}
 		}
 		catch (DBException e) {
@@ -128,12 +140,13 @@ class DataShareMonitor {
 
 //@formatter:on
 @Component
+@Profile(ApplicationProfile.PUBLISHER)
 class DataShareStarter implements Processor {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
-	DataShareCommons commons;
+	RemoteDataShareCommons commons;
 	
 	@Override
 	public void process(Exchange exchange) throws Exception {

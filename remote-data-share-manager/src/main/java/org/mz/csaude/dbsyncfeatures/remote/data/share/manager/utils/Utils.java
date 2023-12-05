@@ -1,8 +1,12 @@
-package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model;
+package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+
+import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParser.Feature;
@@ -52,13 +56,38 @@ public class Utils {
 	
 	
 	public static <T> T loadObjectFormJSON(Class<T> clazz, File jsonFile) {
+		
+		InputStream b = null;
+		
 		try {
-			return loadObjectFormJSON(clazz, new String(Files.readAllBytes(jsonFile.toPath())));
+			b = Files.newInputStream(jsonFile.toPath());
+			
+			return loadObjectFormJSON(clazz,  new String(IOUtils.toByteArray(b)));
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		finally {
+			if (b != null) {
+				try {
+					b.close();
+				}
+				catch (IOException e) {}
+			}
+		}
 		
+	}
+	
+	public static void writeObjectToFile(Object object, File file) {
+		try {
+			
+			file.getParentFile().mkdirs();
+		
+			Files.write(file.toPath(), parseToJSON(object).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		}
+		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 }
