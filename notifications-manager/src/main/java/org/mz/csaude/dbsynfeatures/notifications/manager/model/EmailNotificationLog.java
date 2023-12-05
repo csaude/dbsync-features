@@ -3,7 +3,8 @@ package org.mz.csaude.dbsynfeatures.notifications.manager.model;
 import java.time.LocalDateTime;
 
 import com.sun.istack.NotNull;
-import org.mz.csaude.dbsynfeatures.notifications.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsynfeatures.core.manager.entity.Base;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.Column;
@@ -17,11 +18,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "email_notification_log")
 @Profile(ApplicationProfile.CONSUMER)
-public class EmailNotificationLog {
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    private Long id;
+public class EmailNotificationLog  extends Base {
 
     @Column(name = "message_uuid")
     private String messageUuid;
@@ -72,14 +69,6 @@ public class EmailNotificationLog {
 
     public void setDateSent(LocalDateTime dateSent) {
         this.dateSent = dateSent;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public void setMessageUuid(String messageUuid) {

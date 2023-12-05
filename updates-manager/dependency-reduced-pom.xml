@@ -8,10 +8,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mz.csaude.dbsync-tools</groupId>
-  <artifactId>notifications-manager</artifactId>
-  <name>notifications-manager</name>
+  <artifactId>updates-manager</artifactId>
+  <name>updates-manager</name>
   <version>0.0.1-SNAPSHOT</version>
-  <description>Dbsync Notification Manager</description>
+  <description>Dbsync updates Manager</description>
   <build>
     <resources>
       <resource>
@@ -24,7 +24,7 @@
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
-            <id>notifications-manager</id>
+            <id>updates-manager</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -33,7 +33,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer>
-                  <mainClass>org.mz.csaude.dbsynfeatures.notifications.manager.NotificationsManagerApplication</mainClass>
+                  <mainClass>org.mz.csaude.dbsynfeatures.updates.manager.UpdatesManagerApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>

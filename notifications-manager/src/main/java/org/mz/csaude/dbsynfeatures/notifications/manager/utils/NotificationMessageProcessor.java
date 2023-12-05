@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.CommonConverter;
 import org.mz.csaude.dbsynfeatures.notifications.manager.consumer.NotificationsProcessorRouter;
 import org.mz.csaude.dbsynfeatures.notifications.manager.model.EmailNotificationLog;
 import org.mz.csaude.dbsynfeatures.notifications.manager.model.NotificationInfo;
@@ -37,7 +38,7 @@ public class NotificationMessageProcessor implements Processor {
         try {
             String messageBody = exchange.getIn().getBody(String.class);
 
-            NotificationInfo notificationInfo = commonConverter.fromJson(messageBody, NotificationInfo.class);
+            NotificationInfo notificationInfo = CommonConverter.fromJson(messageBody, NotificationInfo.class);
             exchange.getIn().setBody(notificationInfo);
             NotificationService notificationService = new NotificationService(this.mailConfig);
 

@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsynfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsynfeatures.core.manager.artemis;
 
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.MessageListenerContainerFactory;

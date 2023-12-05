@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog context="consumer"
+<databaseChangeLog context="remote"
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-	<changeSet author="dchirinda" id="20230905-1100">
+	<changeSet author="dchirinda" id="20231115-1100">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="email_notification_log"/>
+				<tableExists tableName="application_update_log"/>
 			</not>
 		</preConditions>
-		<comment>Adding email_notification_log table</comment>
+		<comment>Adding application_update_log table</comment>
 
-		<createTable tableName="email_notification_log">
+		<createTable tableName="application_update_log">
 			<column autoIncrement="true" name="id" type="BIGINT">
 				<constraints nullable="false" primaryKey="true"/>
 			</column>
 			<column name="site_id" type="VARCHAR(100)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="message_type" type="VARCHAR(255)">
+			<column name="current_version" type="VARCHAR(255)">
+				<constraints unique="true" nullable="false"/>
+			</column>
+			<column name="created_at" type="DATETIME(3)">
 				<constraints nullable="false"/>
 			</column>
-			<column name="subject" type="VARCHAR(255)">
-				<constraints nullable="false"/>
+			<column name="updated_at" type="DATETIME(3)">
+				<constraints nullable="true"/>
 			</column>
-			<column name="date_sent" type="DATETIME(3)">
+			<column name="is_active" type="BOOLEAN">
 				<constraints nullable="false"/>
-			</column>
-			<column name="message_uuid" type="VARCHAR(255)">
-				<constraints unique="true"/>
 			</column>
 		</createTable>
-
 	</changeSet>
 </databaseChangeLog>

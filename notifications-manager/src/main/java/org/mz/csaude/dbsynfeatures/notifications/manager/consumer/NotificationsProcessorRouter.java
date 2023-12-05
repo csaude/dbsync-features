@@ -1,19 +1,19 @@
 package org.mz.csaude.dbsynfeatures.notifications.manager.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.mz.csaude.dbsynfeatures.core.manager.artemis.CustomMessageListenerContainer;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.CommonConverter;
 import org.mz.csaude.dbsynfeatures.notifications.manager.service.EmailNotificationLogService;
-import org.mz.csaude.dbsynfeatures.notifications.manager.utils.ApplicationProfile;
-import org.mz.csaude.dbsynfeatures.notifications.manager.utils.CommonConverter;
 import org.mz.csaude.dbsynfeatures.notifications.manager.utils.MailConfig;
 import org.mz.csaude.dbsynfeatures.notifications.manager.utils.NotificationMessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.mz.csaude.dbsynfeatures.notifications.manager.utils.CustomMessageListenerContainer;
 
 @Component
-@Profile(ApplicationProfile.CONSUMER)
+@Profile(ApplicationProfile.CENTRAL)
 public class NotificationsProcessorRouter extends RouteBuilder {
 	
 	@Value("${artemis.dbsync.notifications.endpoint}")
