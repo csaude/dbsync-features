@@ -3,15 +3,15 @@ package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.site.central;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
-import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.DataShareInfoManager;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.CONSUMER)
+@Profile(ApplicationProfile.CENTRAL)
 public class RemoteDataRequestRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")

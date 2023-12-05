@@ -1,12 +1,15 @@
 package org.mz.csaude.dbsynfeatures.core.manager.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
 
 @MappedSuperclass
 public abstract  class Auditable extends Base {
-    @Column(name = "created_at", nullable = false)
+   	private static final long serialVersionUID = 2248918162173231925L;
+
+	@Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = true)

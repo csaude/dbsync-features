@@ -9,10 +9,10 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.util.FileUtil;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareCommons;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
-import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.DataShareInfoManager;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
 import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.PUBLISHER)
+@Profile(ApplicationProfile.REMOTE)
 public class RemoteDataRequestListenerRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")
@@ -80,7 +80,7 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 
 //@formatter:on
 @Component
-@Profile(ApplicationProfile.PUBLISHER)
+@Profile(ApplicationProfile.REMOTE)
 class RemoteDataShareProcessMonitor {
 	
 	@Value("${epts-etl.home.dir}")
@@ -140,7 +140,7 @@ class RemoteDataShareProcessMonitor {
 
 //@formatter:on
 @Component
-@Profile(ApplicationProfile.PUBLISHER)
+@Profile(ApplicationProfile.REMOTE)
 class DataShareStarter implements Processor {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());

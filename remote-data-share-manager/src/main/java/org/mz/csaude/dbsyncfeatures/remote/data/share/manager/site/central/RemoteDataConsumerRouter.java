@@ -14,9 +14,9 @@ import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareCom
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataInfo;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.service.RemoteDataShareInfoService;
-import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
 import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.CONSUMER)
+@Profile(ApplicationProfile.CENTRAL)
 public class RemoteDataConsumerRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.endpoint}")
@@ -90,7 +90,7 @@ public class RemoteDataConsumerRouter extends RouteBuilder {
 
 //@formatter:on
 @Component
-@Profile(ApplicationProfile.CONSUMER)
+@Profile(ApplicationProfile.CENTRAL)
 class CentralDataShareProcessMonitor {
 	
 	@Value("${epts-etl.home.dir}")

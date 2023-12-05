@@ -8,12 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.springframework.context.annotation.Profile;
 
 @Entity
 @Table(name = "remote_data_share_info")
-@Profile(ApplicationProfile.CONSUMER)
+@Profile(ApplicationProfile.CENTRAL)
 public class RemoteDataShareInfo {
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
