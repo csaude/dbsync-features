@@ -1,19 +1,16 @@
 {
-	processType: "DB_QUICK_EXPORT",
+	processType: "DB_QUICK_LOAD",
     modelType: "OPENMRS",
 	
 	syncRootDirectory: "/home/eip/application/eptssync",
 	classPath: "/home/eip/application/eptssync/epts-etl-api-1.0.jar",
 	
-	syncRootDirectory: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\data\\quick-export",
+	syncRootDirectory: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\testing\\quick-load",
 	classPath: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\openmrs-module-epts-etl\\api\\target\\original-epts-etl-api-1.0.jar",
 	
-	originAppLocationCode: "origin_app_location_code",
 	firstExport: false,
 	automaticStart: true, 
-	resumable: true,
-	observationDate: observation_date,
-	finalizerFullClassName: "org.openmrs.module.epts.etl.dbquickexport.controller.DbQuickExportFinalizer",
+	resumable: false,
 
 	appsInfo:[
 
@@ -30,15 +27,24 @@
 	],
 	
 	operations: [
-		 	{
-				operationType: "DB_QUICK_EXPORT",
-				maxRecordPerProcessing: 1000,
+		{
+				operationType: "DATABASE_PREPARATION",
+				maxRecordPerProcessing: 1,
 				maxSupportedEngines: 1,
-				minRecordsPerEngine: 1000,
+				minRecordsPerEngine: 1,
 				disabled: false,
-				processingMode: "sequencial"
-			}
-
+				processingMode: "parallel",
+				
+				child:{
+					operationType: "DB_QUICK_LOAD",
+					maxRecordPerProcessing: 10000,
+					maxSupportedEngines: 1,
+					minRecordsPerEngine: 1000,
+					disabled: false,
+					processingMode: "sequencial",
+					sourceFolders: ["src_folder_list"]
+				}
+		}		
 	],
 	
 	tablesConfigurations: [

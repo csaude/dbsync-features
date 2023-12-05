@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.io.IOUtils;
@@ -15,6 +17,7 @@ import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
 import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
 import org.openmrs.module.epts.etl.controller.conf.SyncConfiguration;
+import org.openmrs.module.epts.etl.utilities.concurrent.ThreadPoolService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +33,7 @@ public class RemoteDataShareCommons {
 	
 	private SyncConfiguration syncConfig;
 	
-	private ProcessStarter dataExportProcessStarter;
+	private ProcessStarter dataShareProcessStarter;
 	
 	@Value("${db-sync.senderId}")
 	private String senderId;
@@ -68,11 +71,11 @@ public class RemoteDataShareCommons {
 	
 	@JsonIgnore
 	public ProcessStarter getDataExportProcessStarter() {
-		return dataExportProcessStarter;
+		return dataShareProcessStarter;
 	}
 	
 	public String getSyncConfigurationFilePath(String eptsEtlHomeDir) {
-		String profile = env.getActiveProfiles()[0];
+		String profile = getActiveProfile();
 		
 		String confFileName = "";
 		
@@ -92,7 +95,7 @@ public class RemoteDataShareCommons {
 	
 	public File getSyncConfigurationFileTemplate() {
 		
-		String profile = env.getActiveProfiles()[0];
+		String profile = getActiveProfile();
 		
 		String confFileTemplate = "";
 		
@@ -127,6 +130,65 @@ public class RemoteDataShareCommons {
 		
 		return syncConfig.generateProcessStatusFolder() + File.separator + "remote-data-share" + File.separator + "monitor"
 		        + File.separator + "data_share.monitor";
+	}
+	
+	@JsonIgnore
+	/**
+	 * Check if there were added new folders to the sync root directory after the current Sync
+	 * Processor {@link #dataShareProcessStarter} Started its processing. If the
+	 * {@link #dataShareProcessStarter} is empty then if there is ant folder the method will asume
+	 * that there were added news folders
+	 * 
+	 * @return
+	 */
+	public boolean checkIfSyncRootDirectoryHasNewlyAddedFolders() {
+		ProcessStarter starter = getDataExportProcessStarter();
+		
+		List<String> currentSrcFolders;
+		
+		if (starter != null) {
+			currentSrcFolders = starter.getCurrentController().getConfiguration().getOperations().get(0).getChild()
+			        .getSourceFolders();
+		} else {
+			//Force creation of empty list
+			currentSrcFolders = new ArrayList<>();
+		}
+		
+		/*
+		 * Check if the current running process miss some folders from syncRootDirectory
+		 */
+		for (File file : getDestionatioShareRootDirectory().listFiles()) {
+			if (!currentSrcFolders.contains(file.getName())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@JsonIgnore
+	public String getDestinationShareRootDirectoryPath() {
+		
+		if (syncConfig == null) {
+			synchronized (stringLock) {
+				try {
+					
+					loadSyncConfigurations(null);
+					
+					syncConfig = SyncConfiguration.loadFromFile(getSyncConfigurationFile(eptsEtlHomeDir));
+				}
+				catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		
+		return syncConfig.getSyncRootDirectory() + File.separator + "import";
+	}
+	
+	@JsonIgnore
+	public File getDestionatioShareRootDirectory() {
+		return new File(getDestinationShareRootDirectoryPath());
 	}
 	
 	@JsonIgnore
@@ -166,23 +228,46 @@ public class RemoteDataShareCommons {
 		}
 	}
 	
-	public void startExportProcess(RemoteDataShareInfo dataShareInfo, Logger logger) throws Exception {
+	public String getActiveProfile() {
+		return this.env.getActiveProfiles()[0];
+	}
+	
+	public void startDataShareProcess(RemoteDataShareInfo dataShareInfo, Logger logger) throws Exception {
 		
-		logger.info("Starting data-share....");
+		String process = "";
+		
+		if (ApplicationProfile.isCentral(getActiveProfile())) {
+			process = "Loading";
+		} else if (ApplicationProfile.isRemote(getActiveProfile())) {
+			process = "Exporting";
+		} else
+			throw new RuntimeException("Unsupported profile [" + getActiveProfile() + "]");
+		
+		logger.info("Starting " + process + " process on data-share");
 		
 		loadSyncConfigurations(dataShareInfo);
 		
 		File eptsEtlConf = this.getSyncConfigurationFile(eptsEtlHomeDir);
 		
-		//Create a sign to start monitoring
-		Utils.writeObjectToFile(dataShareInfo, this.getShareMonitorFile());
-		
-		try {
-			dataExportProcessStarter = new ProcessStarter(new String[] { eptsEtlConf.getAbsolutePath() }, logger);
-			dataExportProcessStarter.run();
+		if (ApplicationProfile.isCentral(getActiveProfile())) {
+			String srcFolderList = "";
+			
+			for (File file : getDestionatioShareRootDirectory().listFiles()) {
+				if (file.isDirectory()) {
+					srcFolderList = String.join(",", file.getName());
+				}
+			}
+			
+			replaceAllInFile(eptsEtlConf, "src_folder_list", srcFolderList);
+		} else {
+			//Create a sign to start monitoring
+			Utils.writeObjectToFile(dataShareInfo, this.getShareMonitorFile());
 		}
-		catch (IOException e) {}
 		
+		this.dataShareProcessStarter = new ProcessStarter(new String[] { eptsEtlConf.getAbsolutePath() }, logger);
+		
+		ThreadPoolService.getInstance().createNewThreadPoolExecutor("data-share-executor")
+        .execute(this.dataShareProcessStarter);
 	}
 	
 	private static void replaceAllInFile(File file, String toFind, String replacement) {

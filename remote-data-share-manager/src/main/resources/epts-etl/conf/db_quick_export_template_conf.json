@@ -2,10 +2,10 @@
 	processType: "DB_QUICK_EXPORT",
     modelType: "OPENMRS",
 	
-	syncRootDirectory: "/home/eip/application/eptssync",
-	classPath: "/home/eip/application/eptssync/epts-etl-api-1.0.jar",
+	syncRootDirectory_: "/home/eip/application/eptssync",
+	classPath_: "/home/eip/application/eptssync/epts-etl-api-1.0.jar",
 	
-	syncRootDirectory: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\data\\quick-export",
+	syncRootDirectory: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\testing\\quick-export",
 	classPath: "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\openmrs-module-epts-etl\\api\\target\\original-epts-etl-api-1.0.jar",
 	
 	originAppLocationCode: "origin_app_location_code",

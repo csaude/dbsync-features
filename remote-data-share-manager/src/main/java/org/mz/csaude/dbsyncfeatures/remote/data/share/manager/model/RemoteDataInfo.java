@@ -50,8 +50,8 @@ public class RemoteDataInfo {
 	
 	@JsonIgnore
 	public String getDestinationRelativePath() {
-		String[] utiParts = {originAppLocationCode, tableName};
-	
+		String[] utiParts = { originAppLocationCode, tableName };
+		
 		return File.separator + StringUtils.join(utiParts, File.separator);
 	}
 	

@@ -73,7 +73,6 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 		int period = 1000*60*5;
 		
 		from("timer:data-share-monitor?delay=" + delay + "&period=" + period)
-			.log(artemisEndPoint)
 			.bean(shareMonitor, "doMonitoring");
 	}
 }
@@ -120,7 +119,7 @@ class RemoteDataShareProcessMonitor {
 					if (commons.getDataExportProcessStarter() == null) {
 						logger.info("The data share was requested but no share process is running. Force staring...");
 						
-						commons.startExportProcess(Utils.loadObjectFormJSON(RemoteDataShareInfo.class, monitoringFile),
+						commons.startDataShareProcess(Utils.loadObjectFormJSON(RemoteDataShareInfo.class, monitoringFile),
 						    logger);
 					}
 				}
@@ -152,6 +151,6 @@ class DataShareStarter implements Processor {
 	public void process(Exchange exchange) throws Exception {
 		RemoteDataShareInfo dataShareInfo = (RemoteDataShareInfo) exchange.getMessage().getBody();
 		
-		commons.startExportProcess(dataShareInfo, logger);
+		commons.startDataShareProcess(dataShareInfo, logger);
 	}
 }
