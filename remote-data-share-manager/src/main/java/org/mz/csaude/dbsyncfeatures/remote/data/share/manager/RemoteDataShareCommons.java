@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.commons.io.IOUtils;
@@ -17,7 +17,9 @@ import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
 import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
 import org.openmrs.module.epts.etl.controller.conf.SyncConfiguration;
+import org.openmrs.module.epts.etl.utilities.CommonUtilities;
 import org.openmrs.module.epts.etl.utilities.concurrent.ThreadPoolService;
+import org.openmrs.module.epts.etl.utilities.io.FileUtilities;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Component
 public class RemoteDataShareCommons {
+	
+	static CommonUtilities utilities = CommonUtilities.getInstance();
 	
 	private static final String stringLock = new String("LOCK_STRING");
 	
@@ -132,34 +136,31 @@ public class RemoteDataShareCommons {
 		        + File.separator + "data_share.monitor";
 	}
 	
-	@JsonIgnore
-	/**
-	 * Check if there were added new folders to the sync root directory after the current Sync
-	 * Processor {@link #dataShareProcessStarter} Started its processing. If the
-	 * {@link #dataShareProcessStarter} is empty then if there is ant folder the method will asume
-	 * that there were added news folders
-	 * 
-	 * @return
-	 */
-	public boolean checkIfSyncRootDirectoryHasNewlyAddedFolders() {
-		ProcessStarter starter = getDataExportProcessStarter();
+	public void tryToCreateImportDataFolders(Logger logger) {
+		String basePath = getDataShareDirectory();
 		
-		List<String> currentSrcFolders;
+		logger.info("Check import source directories");
 		
-		if (starter != null) {
-			currentSrcFolders = starter.getCurrentController().getConfiguration().getOperations().get(0).getChild()
-			        .getSourceFolders();
-		} else {
-			//Force creation of empty list
-			currentSrcFolders = new ArrayList<>();
+		for (String tableName : syncConfig.parteTableConfigurationsToString()) {
+			File dir = new File(basePath + File.separator + tableName);
+			
+			if (!dir.exists()) {
+				logger.info("The dir for table " + tableName + " does not exists! Creating it....");
+				dir.mkdirs();
+				logger.info("The dir for table " + tableName + " was created at: " + dir.getAbsolutePath());
+			}
 		}
-		
-		/*
-		 * Check if the current running process miss some folders from syncRootDirectory
-		 */
+	}
+	
+	@JsonIgnore
+	public boolean checkIfImportDirectoryHasData() {
 		for (File file : getDestionatioShareRootDirectory().listFiles()) {
-			if (!currentSrcFolders.contains(file.getName())) {
-				return true;
+			if (file.isDirectory()) {
+				File[] filesInDir = file.listFiles();
+				
+				if (filesInDir.length > 0) {
+					return true;
+				}
 			}
 		}
 		
@@ -167,7 +168,7 @@ public class RemoteDataShareCommons {
 	}
 	
 	@JsonIgnore
-	public String getDestinationShareRootDirectoryPath() {
+	public String getDataShareDirectory() {
 		
 		if (syncConfig == null) {
 			synchronized (stringLock) {
@@ -183,12 +184,25 @@ public class RemoteDataShareCommons {
 			}
 		}
 		
-		return syncConfig.getSyncRootDirectory() + File.separator + "import";
+		String shareDirectory = "";
+		shareDirectory += syncConfig.getSyncRootDirectory() + File.separator;
+		
+		if (ApplicationProfile.isCentral(getActiveProfile())) {
+			shareDirectory += "import" + File.separator;
+			shareDirectory += syncConfig.getOperations().get(0).getChild().getSourceFolders().get(0);
+		}
+		else if (ApplicationProfile.isRemote(getActiveProfile())) {
+			shareDirectory += "_" + syncConfig.getOriginAppLocationCode().toLowerCase();
+			shareDirectory += FileUtilities.getPathSeparator();
+			shareDirectory += "export";
+		}
+		
+		return shareDirectory;
 	}
 	
 	@JsonIgnore
 	public File getDestionatioShareRootDirectory() {
-		return new File(getDestinationShareRootDirectoryPath());
+		return new File(getDataShareDirectory());
 	}
 	
 	@JsonIgnore
@@ -254,11 +268,14 @@ public class RemoteDataShareCommons {
 			
 			for (File file : getDestionatioShareRootDirectory().listFiles()) {
 				if (file.isDirectory()) {
-					srcFolderList = String.join(",", file.getName());
+					
+					if (srcFolderList.isEmpty()) {
+						srcFolderList = utilities.quote(file.getName());
+					} else {
+						srcFolderList = String.join(",", srcFolderList, utilities.quote(file.getName()));
+					}
 				}
 			}
-			
-			replaceAllInFile(eptsEtlConf, "src_folder_list", srcFolderList);
 		} else {
 			//Create a sign to start monitoring
 			Utils.writeObjectToFile(dataShareInfo, this.getShareMonitorFile());
@@ -267,19 +284,40 @@ public class RemoteDataShareCommons {
 		this.dataShareProcessStarter = new ProcessStarter(new String[] { eptsEtlConf.getAbsolutePath() }, logger);
 		
 		ThreadPoolService.getInstance().createNewThreadPoolExecutor("data-share-executor")
-        .execute(this.dataShareProcessStarter);
+		        .execute(this.dataShareProcessStarter);
 	}
 	
 	private static void replaceAllInFile(File file, String toFind, String replacement) {
+		
+		OutputStream dstFile = null;
+		InputStream srcFile = null;
+		
 		try {
 			Charset charset = StandardCharsets.UTF_8;
 			
-			String content = IOUtils.toString(new FileInputStream(file), charset);
+			srcFile = new FileInputStream(file);
+			
+			String content = IOUtils.toString(srcFile, charset);
 			content = content.replaceAll(toFind, replacement);
-			IOUtils.write(content, new FileOutputStream(file), charset);
+			
+			dstFile = new FileOutputStream(file);
+			
+			IOUtils.write(content, dstFile, charset);
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+		finally {
+			try {
+				if (dstFile != null)
+					dstFile.close();
+			}
+			catch (IOException e) {}
+			try {
+				if (srcFile != null)
+					srcFile.close();
+			}
+			catch (IOException e) {}
 		}
 	}
 }

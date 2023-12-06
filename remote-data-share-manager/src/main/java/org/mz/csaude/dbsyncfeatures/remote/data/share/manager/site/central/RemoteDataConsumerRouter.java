@@ -2,6 +2,7 @@ package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.site.central;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperties;
@@ -59,27 +60,40 @@ public class RemoteDataConsumerRouter extends RouteBuilder {
 	@Autowired
 	private RemoteDataShareCommons commons;
 	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Override
 	public void configure() {
 		String srcUri = artemisEndPoint;
-		String dstUri = "file:" + commons.getDestinationShareRootDirectoryPath();
+		String dstUri = "file:" + commons.getDataShareDirectory();
 		
-		from(srcUri).unmarshal().json(JsonLibrary.Jackson, RemoteDataInfo.class)
-		        .log("Message [" + simple(dstUri + "${body.fileName}") + "] was received from "
-		                + simple(dstUri + "${body.originAppLocationCode}"))
-		        .choice().when(simple("${body.empty}"))
-		        .log("Receiveid finish signal for ${body.originAppLocationCode} site. Finishing...").process(shareFinalizer)
-		        .endChoice().otherwise().setProperty("dstUri", simple(dstUri + "${body.destinationRelativePath}"))
-		        .setProperty("fileName", simple("${body.fileName}")).bean(reader)
-		        .log("Writing file to: " + simple("${exchangeProperty.dstUri}"))
-		        .setHeader("CamelFileName", simple("${exchangeProperty.fileName}"))
-		        .dynamicRouter(method(destinationGenerator)).endChoice().end().onCompletion().onCompleteOnly()
-		        .process(exchange -> {
-			        CustomMessageListenerContainer.enableAcknowledgement();
-		        });
+		commons.tryToCreateImportDataFolders(logger);
 		
-		int delay = 1000 * 30 * 1;
-		int period = 1000 * 30 * 3;
+		//@formatter:off
+		from(srcUri).unmarshal()
+			.json(JsonLibrary.Jackson, RemoteDataInfo.class)
+		    .log("Message [" + simple(dstUri + "${body.fileName}") + "] was received from " + simple(dstUri + "${body.originAppLocationCode}"))
+		    .choice()
+		    	.when(simple("${body.empty}"))
+		        	.log("Receiveid finish signal for ${body.originAppLocationCode} site. Finishing...").process(shareFinalizer)
+		        .endChoice()
+		        .otherwise()
+		        	.setProperty("dstUri", simple(dstUri + "${body.destinationRelativePath}"))
+		        	.setProperty("fileName", simple("${body.fileName}"))
+		        	.bean(reader)
+		        	.log("Writing file to: " + simple("${exchangeProperty.dstUri}"))
+		        	.setHeader("CamelFileName", simple("${exchangeProperty.fileName}"))
+		        	.dynamicRouter(method(destinationGenerator))
+		        .endChoice()
+		    .end()
+		    .onCompletion()
+		    	.onCompleteOnly()
+		        	.process(exchange -> {
+		        		CustomMessageListenerContainer.enableAcknowledgement();
+		        	});
+		
+		int delay = 1000;
+		int period = 1000 * 60 * 1;
 		
 		from("timer:data-share-monitor?delay=" + delay + "&period=" + period).bean(shareMonitor, "doMonitoring");
 	}
@@ -107,8 +121,13 @@ class CentralDataShareProcessMonitor {
 		try {
 			logger.info("Performing Data Load monitoring actions");
 			
-			if (commons.checkIfSyncRootDirectoryHasNewlyAddedFolders()) {
+			if (UUID.randomUUID() != null) {
+				logger.info("Skip start import process");
 				
+				return;
+			}
+			
+			if (commons.checkIfImportDirectoryHasData()) {
 				//Kill current process
 				if (commons.getDataExportProcessStarter() != null) {
 					ProcessController loadController = commons.getDataExportProcessStarter().getCurrentController();
@@ -131,14 +150,15 @@ class CentralDataShareProcessMonitor {
 						logger.info("Waiting for process to stop!");
 					}
 					
-					ThreadPoolService.getInstance().terminateTread(commons.getDataExportProcessStarter().getLogger(), "data-share-executor",  commons.getDataExportProcessStarter());
+					ThreadPoolService.getInstance().terminateTread(commons.getDataExportProcessStarter().getLogger(),
+					    "data-share-executor", commons.getDataExportProcessStarter());
 				} else {
 					logger.info("The load process is not running but there are data to load...");
 				}
 				
 				commons.startDataShareProcess(null, logger);
 			} else {
-				logger.info("There is no folders to load. Waiting...");
+				logger.info("There is no data to load. Sleeping...");
 			}
 			
 		}
@@ -152,6 +172,7 @@ class CentralDataShareProcessMonitor {
 }
 
 @Component
+@Profile(ApplicationProfile.CENTRAL)
 class AttachmentReader {
 	
 	public byte[] readAttachmentContent(RemoteDataInfo data) {
@@ -160,6 +181,7 @@ class AttachmentReader {
 }
 
 @Component
+@Profile(ApplicationProfile.CENTRAL)
 class DestinationGenerator {
 	
 	public String getDestinationFolder(@ExchangeProperties Map<String, String> properies) {
@@ -172,6 +194,7 @@ class DestinationGenerator {
 }
 
 @Component
+@Profile(ApplicationProfile.CENTRAL)
 class SiteDataShareFinalizer implements Processor {
 	
 	@Autowired

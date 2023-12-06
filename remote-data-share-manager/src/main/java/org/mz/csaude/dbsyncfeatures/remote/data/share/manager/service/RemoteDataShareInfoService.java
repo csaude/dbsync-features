@@ -24,9 +24,14 @@ public class RemoteDataShareInfoService {
 			for (RemoteDataShareInfo r : existingData) {
 				//There is an assumption that for any origin location only one entry can have empty days
 				//And this record is the last registered
-				if (r.getRequestDate() == null && r.getImportFinishDate() == null) {
-					r.setRequestDate(data.getRequestDate());
-					r.setImportFinishDate(data.getImportFinishDate());
+				if (r.getRequestDate() == null || r.getImportFinishDate() == null) {
+					if (r.getRequestDate() == null) {
+						r.setRequestDate(data.getRequestDate());
+					}
+					
+					if (r.getImportFinishDate() == null) {
+						r.setImportFinishDate(data.getImportFinishDate());
+					}
 					
 					remoteDataShareInfoRepository.save(data);
 					
