@@ -10,7 +10,6 @@
 	
 	"firstExport": false,
 	"automaticStart": true, 
-	"resumable": false,
 
 	"appsInfo":[
 
@@ -36,14 +35,14 @@
 				"processingMode": "parallel",
 				
 				"child":{
-					"operationType": "DB_QUICK_LOAD",
+					"operationType": "QUICK_LOAD",
 					"maxRecordPerProcessing": 1,
 					"maxSupportedEngines": 1,
 					"minRecordsPerEngine": 1,
 					"disabled": false,
 					"processingMode": "parallel",
 					"sourceFolders": ["all-sites"],
-					"runOnce":true
+					"nonResumable":true
 				}
 		}		
 	],

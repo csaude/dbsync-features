@@ -63,8 +63,6 @@ public class RemoteDataShareCommons {
 	@Autowired
 	private Environment env;
 	
-	private boolean configurationFileFullGenerated;
-	
 	private static String EXPORT_CONF_FILE_TEMPLATE = "/epts-etl/conf/db_quick_export_template_conf.json";
 	
 	private static String LOAD_CONF_FILE_TEMPLATE = "/epts-etl/conf/db_quick_load_template_conf.json";
@@ -137,7 +135,7 @@ public class RemoteDataShareCommons {
 	}
 	
 	public void tryToCreateImportDataFolders(Logger logger) {
-		String basePath = getDataShareDirectory();
+		String basePath = getDataShareDirectoryPath();
 		
 		logger.info("Check import source directories");
 		
@@ -154,7 +152,7 @@ public class RemoteDataShareCommons {
 	
 	@JsonIgnore
 	public boolean checkIfImportDirectoryHasData() {
-		for (File file : getDestionatioShareRootDirectory().listFiles()) {
+		for (File file : getDataShareDirectory().listFiles()) {
 			if (file.isDirectory()) {
 				File[] filesInDir = file.listFiles();
 				
@@ -168,7 +166,12 @@ public class RemoteDataShareCommons {
 	}
 	
 	@JsonIgnore
-	public String getDataShareDirectory() {
+	public File getDataShareDirectory() {
+		return new File(getDataShareDirectoryPath());
+	}
+	
+	@JsonIgnore
+	public String getDataShareDirectoryPath() {
 		
 		if (syncConfig == null) {
 			synchronized (stringLock) {
@@ -190,8 +193,7 @@ public class RemoteDataShareCommons {
 		if (ApplicationProfile.isCentral(getActiveProfile())) {
 			shareDirectory += "import" + File.separator;
 			shareDirectory += syncConfig.getOperations().get(0).getChild().getSourceFolders().get(0);
-		}
-		else if (ApplicationProfile.isRemote(getActiveProfile())) {
+		} else if (ApplicationProfile.isRemote(getActiveProfile())) {
 			shareDirectory += "_" + syncConfig.getOriginAppLocationCode().toLowerCase();
 			shareDirectory += FileUtilities.getPathSeparator();
 			shareDirectory += "export";
@@ -201,20 +203,11 @@ public class RemoteDataShareCommons {
 	}
 	
 	@JsonIgnore
-	public File getDestionatioShareRootDirectory() {
-		return new File(getDataShareDirectory());
-	}
-	
-	@JsonIgnore
 	public File getShareMonitorFile() {
 		return new File(getShareMonitorFilePath());
 	}
 	
 	private void loadSyncConfigurations(RemoteDataShareInfo dataShareInfo) {
-		
-		if (configurationFileFullGenerated) {
-			return;
-		}
 		
 		synchronized (stringLock) {
 			File eptsEtlConf = this.getSyncConfigurationFile(eptsEtlHomeDir);
@@ -235,10 +228,6 @@ public class RemoteDataShareCommons {
 			replaceAllInFile(eptsEtlConf, "openmrs_user_password", openmrsDbPassword);
 			replaceAllInFile(eptsEtlConf, "openmrs_user_name", openmrsDbUser);
 			replaceAllInFile(eptsEtlConf, "observation_date", "" + observation_date);
-			
-			if (dataShareInfo != null) {
-				configurationFileFullGenerated = true;
-			}
 		}
 	}
 	
@@ -266,7 +255,7 @@ public class RemoteDataShareCommons {
 		if (ApplicationProfile.isCentral(getActiveProfile())) {
 			String srcFolderList = "";
 			
-			for (File file : getDestionatioShareRootDirectory().listFiles()) {
+			for (File file : getDataShareDirectory().listFiles()) {
 				if (file.isDirectory()) {
 					
 					if (srcFolderList.isEmpty()) {

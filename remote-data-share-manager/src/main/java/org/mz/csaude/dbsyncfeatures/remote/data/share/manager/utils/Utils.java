@@ -49,20 +49,22 @@ public class Utils {
 	public static <T> T loadObjectFormJSON(Class<T> clazz, String json) {
 		try {
 			return defaultJsonObjectMapper().readValue(json, clazz);
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
 	
 	public static <T> T loadObjectFormJSON(Class<T> clazz, File jsonFile) {
 		
 		InputStream b = null;
 		
 		try {
+			jsonFile.getParentFile().mkdirs();
+			
 			b = Files.newInputStream(jsonFile.toPath());
 			
-			return loadObjectFormJSON(clazz,  new String(IOUtils.toByteArray(b)));
+			return loadObjectFormJSON(clazz, new String(IOUtils.toByteArray(b)));
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
@@ -80,10 +82,10 @@ public class Utils {
 	
 	public static void writeObjectToFile(Object object, File file) {
 		try {
-			
 			file.getParentFile().mkdirs();
-		
-			Files.write(file.toPath(), parseToJSON(object).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			
+			Files.write(file.toPath(), parseToJSON(object).getBytes(), StandardOpenOption.CREATE,
+			    StandardOpenOption.TRUNCATE_EXISTING);
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);

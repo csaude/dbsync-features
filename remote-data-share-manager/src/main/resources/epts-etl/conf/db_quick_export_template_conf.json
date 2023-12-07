@@ -11,7 +11,6 @@
 	"originAppLocationCode": "origin_app_location_code",
 	"firstExport": false,
 	"automaticStart": true, 
-	"resumable": true,
 	"observationDate": observation_date,
 	"finalizerFullClassName": "org.openmrs.module.epts.etl.dbquickexport.controller.DbQuickExportFinalizer",
 
@@ -31,7 +30,7 @@
 	
 	"operations": [
 		 	{
-				"operationType": "DB_QUICK_EXPORT",
+				"operationType": "QUICK_EXPORT",
 				"maxRecordPerProcessing": 1000,
 				"maxSupportedEngines": 1,
 				"minRecordsPerEngine": 1000,

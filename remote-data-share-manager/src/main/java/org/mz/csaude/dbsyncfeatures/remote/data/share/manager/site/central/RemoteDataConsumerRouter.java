@@ -2,7 +2,6 @@ package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.site.central;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperties;
@@ -15,9 +14,6 @@ import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataSh
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.service.RemoteDataShareInfoService;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.CustomMessageListenerContainer;
 import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
-import org.openmrs.module.epts.etl.controller.ProcessController;
-import org.openmrs.module.epts.etl.utilities.concurrent.ThreadPoolService;
-import org.openmrs.module.epts.etl.utilities.concurrent.TimeCountDown;
 import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,46 +117,15 @@ class CentralDataShareProcessMonitor {
 		try {
 			logger.info("Performing Data Load monitoring actions");
 			
-			if (UUID.randomUUID() != null) {
-				logger.info("Skip start import process");
-				
-				return;
-			}
-			
-			if (commons.checkIfImportDirectoryHasData()) {
-				//Kill current process
-				if (commons.getDataExportProcessStarter() != null) {
-					ProcessController loadController = commons.getDataExportProcessStarter().getCurrentController();
-					
-					/*
-					 * Prevent multiple stop request
-					 */
-					if (loadController.stopRequested()) {
-						return;
-					}
-					
-					logger.info("Found new folders which are not on loading process!");
-					logger.info("Stopping the current loading process...");
-					
-					loadController.requestStop();
-					
-					while (!loadController.isStopped()) {
-						TimeCountDown.sleep(loadController.getWaitTimeToCheckStatus());
-						
-						logger.info("Waiting for process to stop!");
-					}
-					
-					ThreadPoolService.getInstance().terminateTread(commons.getDataExportProcessStarter().getLogger(),
-					    "data-share-executor", commons.getDataExportProcessStarter());
-				} else {
-					logger.info("The load process is not running but there are data to load...");
-				}
+			if (commons.getDataExportProcessStarter() != null) {
+				logger.info("The Import process is running! Nothing to do!");
+			} else if (commons.checkIfImportDirectoryHasData()) {
+				logger.info("The load process is not running but there are data to load...");
 				
 				commons.startDataShareProcess(null, logger);
 			} else {
 				logger.info("There is no data to load. Sleeping...");
 			}
-			
 		}
 		catch (DBException e) {
 			throw new RuntimeException(e);
