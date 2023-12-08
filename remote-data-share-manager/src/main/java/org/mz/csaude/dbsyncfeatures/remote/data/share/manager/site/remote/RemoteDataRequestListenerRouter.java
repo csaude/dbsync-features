@@ -123,8 +123,7 @@ class RemoteDataShareProcessMonitor {
 						    logger);
 					}
 				}
-			}
-			else {
+			} else {
 				logger.info("No monitoring file exists! Nothing to do!");
 			}
 		}
