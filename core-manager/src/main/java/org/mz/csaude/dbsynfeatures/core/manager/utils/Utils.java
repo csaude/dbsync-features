@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils;
+package org.mz.csaude.dbsynfeatures.core.manager.utils;
 
 import java.io.File;
 import java.io.IOException;

@@ -11,8 +11,8 @@ import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareCom
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.DataShareInfoManager;
-import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.Utils;
 import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsynfeatures.core.manager.utils.Utils;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
 import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;

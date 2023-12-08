@@ -2,21 +2,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mz.csaude.centralization-features</groupId>
 		<artifactId>centralization-features</artifactId>
 		<version>1.0</version>
 	</parent>
 	
-	<artifactId>core-manager</artifactId>
-	<name>core-manager</name>
-	<description>Centralization Core Manager</description>
-	
-	<packaging>jar</packaging>
-	
+	<artifactId>notifications-manager</artifactId>
+	<name>notifications-manager</name>
+	<description>Notifications Manager</description>
 	
 	<dependencies>
+		<dependency>
+			<groupId>org.mz.csaude.centralization-features</groupId>
+			<artifactId>notifications-manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mz.csaude.centralization-features</groupId>
+			<artifactId>remote-data-share-manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mz.csaude.centralization-features</groupId>
+			<artifactId>updates-manager</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -40,6 +49,8 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -74,12 +85,8 @@
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
-			<dependency>
-				<groupId>com.jcraft</groupId>
-				<artifactId>jsch</artifactId>
-			</dependency>
-	</dependencies>	
-	
+
+	</dependencies>
 
 	<build>
 		<resources>
@@ -94,15 +101,22 @@
 			  <groupId>org.apache.maven.plugins</groupId>
 			  <artifactId>maven-shade-plugin</artifactId>
 			  <executions>
+			     <!-- Run shade goal on package phase -->
 			    <execution>
-					<phase>package</phase>
-					<goals>
-						<goal>shade</goal>
-					</goals>
-					<id>core-manager</id>
-					<configuration>
-						 <createDependencyReducedPom>false</createDependencyReducedPom>
-					</configuration>
+				<phase>package</phase>
+				<goals>
+					<goal>shade</goal>
+				</goals>
+				<id>notifications-manager</id>
+				<configuration>
+					 <createDependencyReducedPom>false</createDependencyReducedPom>
+				  <transformers>
+							<!-- add Main-Class to manifest file -->
+	                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+						<mainClass>org.mz.csaude.dbsynfeatures.notifications.manager.NotificationsManagerApplication</mainClass>
+					</transformer>
+				  </transformers>
+				</configuration>
 			      </execution>
 			  </executions>
 			</plugin>
