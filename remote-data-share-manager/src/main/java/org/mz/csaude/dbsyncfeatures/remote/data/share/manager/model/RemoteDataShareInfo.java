@@ -8,7 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.springframework.context.annotation.Profile;
 
 @Entity

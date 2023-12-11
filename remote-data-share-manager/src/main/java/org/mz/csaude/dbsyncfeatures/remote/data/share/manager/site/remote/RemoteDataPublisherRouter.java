@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareCommons;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataInfo;
-import org.mz.csaude.dbsynfeatures.core.manager.utils.ApplicationProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;

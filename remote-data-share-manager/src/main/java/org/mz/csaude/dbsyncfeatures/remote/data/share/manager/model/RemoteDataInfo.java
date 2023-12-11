@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mz.csaude.dbsynfeatures.core.manager.utils.Utils;
+import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

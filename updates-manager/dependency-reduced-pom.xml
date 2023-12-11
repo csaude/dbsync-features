@@ -30,7 +30,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer>
-                  <mainClass>org.mz.csaude.dbsynfeatures.updates.manager.UpdatesManagerApplication</mainClass>
+                  <mainClass>org.mz.csaude.dbsyncfeatures.updates.manager.UpdatesManagerApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
