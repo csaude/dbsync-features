@@ -6,9 +6,9 @@
     <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>updates-manager</artifactId>
-  <name>updates-manager</name>
-  <description>Updates Manager</description>
+  <artifactId>manager-app</artifactId>
+  <name>manager-app</name>
+  <description>Centralization Core Manager</description>
   <build>
     <resources>
       <resource>
@@ -21,7 +21,7 @@
         <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
-            <id>updates-manager</id>
+            <id>notifications-manager</id>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
@@ -30,7 +30,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer>
-                  <mainClass>org.mz.csaude.dbsynfeatures.updates.manager.UpdatesManagerApplication</mainClass>
+                  <mainClass>org.mz.csaude.dbsyncfeatures.manager.app.DbsyncManagerApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -42,7 +42,19 @@
   <dependencies>
     <dependency>
       <groupId>org.mz.csaude.centralization-features</groupId>
-      <artifactId>core-manager</artifactId>
+      <artifactId>notifications-manager</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mz.csaude.centralization-features</groupId>
+      <artifactId>remote-data-share-manager</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mz.csaude.centralization-features</groupId>
+      <artifactId>updates-manager</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>

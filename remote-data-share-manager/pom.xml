@@ -14,10 +14,10 @@
 	<description>Remote Data Share Manager</description>
 	
 	<dependencies>
-		<dependency>
-			<groupId>org.mz.csaude.centralization-features</groupId>
-			<artifactId>core-manager</artifactId>
-		</dependency>	
+	<dependency>
+		<groupId>org.mz.csaude.centralization-features</groupId>
+			<artifactId>core-manager</artifactId>	
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -79,10 +79,6 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
@@ -120,8 +116,7 @@
 				<configuration>
 					 <createDependencyReducedPom>false</createDependencyReducedPom>
 				  <transformers>
-							<!-- add Main-Class to manifest file -->
-	                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+					    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 						<mainClass>org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareManagerApplication</mainClass>
 					</transformer>
 				  </transformers>

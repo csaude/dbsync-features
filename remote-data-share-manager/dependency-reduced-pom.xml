@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <groupId>org.springframework.boot</groupId>
-    <version>2.7.15</version>
-    <relativePath>pom.xml</relativePath>
+    <artifactId>centralization-features</artifactId>
+    <groupId>org.mz.csaude.centralization-features</groupId>
+    <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.mz.csaude.dbsync-tools</groupId>
-  <artifactId>notifications-manager</artifactId>
-  <name>notifications-manager</name>
-  <version>0.0.1-SNAPSHOT</version>
-  <description>Dbsync Notification Manager</description>
+  <artifactId>remote-data-share-manager</artifactId>
+  <name>remote-data-share-manager</name>
+  <description>Remote Data Share Manager</description>
   <build>
     <resources>
       <resource>
@@ -33,7 +30,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer>
-                  <mainClass>org.mz.csaude.dbsynctools.notifications.manager.NotificationsManagerApplication</mainClass>
+                  <mainClass>org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareManagerApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -44,9 +41,15 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.mz.csaude.centralization-features</groupId>
+      <artifactId>core-manager</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
-      <version>2.7.15</version>
+      <version>2.7.18</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -74,16 +77,28 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jpa</artifactId>
+      <version>3.14.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-file</artifactId>
+      <version>3.14.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>
-      <version>2.7.15</version>
+      <version>2.7.18</version>
       <scope>provided</scope>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
-      <version>2.7.15</version>
+      <version>2.7.18</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -135,7 +150,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
+      <version>3.2.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -147,7 +162,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-mail</artifactId>
-      <version>2.7.15</version>
+      <version>2.7.18</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -174,9 +189,11 @@
       <version>4.22.0</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openmrs.module</groupId>
+      <artifactId>epts-etl-api</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
-  <properties>
-    <camel.version>3.14.1</camel.version>
-    <java.version>1.8</java.version>
-  </properties>
 </project>
