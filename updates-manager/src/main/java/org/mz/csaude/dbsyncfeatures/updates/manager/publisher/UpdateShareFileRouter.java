@@ -16,7 +16,7 @@ public class UpdateShareFileRouter extends RouteBuilder {
 	@Value("${share.update.root.folder}")
 	private String updateRootFolder;
 
-	@Value(" ${artemis.dbsync.central.updates.endpoint}")
+	@Value("${artemis.dbsync.central.updates.endpoint}")
 	private String shareUpdatesEndpoint;
 
 	@Autowired
@@ -24,7 +24,6 @@ public class UpdateShareFileRouter extends RouteBuilder {
 
 	@Override
 	public void configure() {
-
 
 		String srcUri = "file:" + updateRootFolder + "?fileName=updates.sh";
 		String dstUri = shareUpdatesEndpoint;
