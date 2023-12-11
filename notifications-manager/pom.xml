@@ -105,7 +105,7 @@
 				  <transformers>
 							<!-- add Main-Class to manifest file -->
 	                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-						<mainClass>org.mz.csaude.dbsynfeatures.notifications.manager.NotificationsManagerApplication</mainClass>
+						<mainClass>org.mz.csaude.dbsyncfeatures.notifications.manager.NotificationsManagerApplication</mainClass>
 					</transformer>
 				  </transformers>
 				</configuration>

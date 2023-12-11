@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.mail.MessagingException;
 import org.junit.jupiter.api.Test;
-import org.mz.csaude.dbsynfeatures.notifications.manager.NotificationsManagerApplication;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.NotificationsManagerApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
