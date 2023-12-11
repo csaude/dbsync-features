@@ -10,16 +10,16 @@ import javax.sql.DataSource;
 @Configuration
 public class DatasourceConfig {
 
-    @Value("${spring.datasource.notifications.url}")
+    @Value("${spring.datasource.centralization.features.url}")
     private String dataBaseUrl;
 
-    @Value("${spring.datasource.notifications.username}")
+    @Value("${spring.datasource.centralization.features.username}")
     private String username;
 
-    @Value("${spring.datasource.notifications.password}")
+    @Value("${spring.datasource.centralization.features.password}")
     private String password;
 
-    @Value("${spring.mngt-datasource.notifications.driver-class-name}")
+    @Value("${spring.mngt-datasource.centralization.features.driver-class-name}")
     private String mysqlDriver;
 
 
