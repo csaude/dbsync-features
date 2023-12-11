@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Profile;
 
 @Entity
 @Table(name = "remote_data_share_info")
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 public class RemoteDataShareInfo {
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

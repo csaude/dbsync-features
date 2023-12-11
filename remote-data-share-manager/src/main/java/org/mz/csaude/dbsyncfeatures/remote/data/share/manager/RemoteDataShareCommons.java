@@ -6,11 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.camel.util.FileUtil;
 import org.apache.commons.io.IOUtils;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
@@ -63,9 +61,9 @@ public class RemoteDataShareCommons {
 	@Autowired
 	private Environment env;
 	
-	private static String EXPORT_CONF_FILE_TEMPLATE = "/epts-etl/conf/db_quick_export_template_conf.json";
+	private static String EXPORT_CONF_FILE_TEMPLATE = "epts-etl/conf/db_quick_export_template_conf.json";
 	
-	private static String LOAD_CONF_FILE_TEMPLATE = "/epts-etl/conf/db_quick_load_template_conf.json";
+	private static String LOAD_CONF_FILE_TEMPLATE = "epts-etl/conf/db_quick_load_template_conf.json";
 	
 	private static String EXPORT_CONF_FILE_NAME = "remote_data_share_db_quick_export.json";
 	
@@ -77,40 +75,20 @@ public class RemoteDataShareCommons {
 	}
 	
 	public String getSyncConfigurationFilePath(String eptsEtlHomeDir) {
-		String profile = getActiveProfile();
-		
 		String confFileName = "";
 		
-		if (ApplicationProfile.isRemote(profile)) {
+		if (ApplicationProfile.isRemote(getActiveProfile())) {
 			confFileName = EXPORT_CONF_FILE_NAME;
-		} else if (ApplicationProfile.isCentral(profile)) {
+		} else if (ApplicationProfile.isCentral(getActiveProfile())) {
 			confFileName = LOAD_CONF_FILE_NAME;
 		} else
-			throw new RuntimeException("The conf file is unkown for profile [" + profile + "]");
+			throw new RuntimeException("The conf file is unkown for profiles [" + getActiveProfile() + "]");
 		
 		return eptsEtlHomeDir + File.separator + "conf" + File.separator + confFileName;
 	}
 	
 	public File getSyncConfigurationFile(String eptsEtlHomeDir) {
 		return new File(getSyncConfigurationFilePath(eptsEtlHomeDir));
-	}
-	
-	public File getSyncConfigurationFileTemplate() {
-		
-		String profile = getActiveProfile();
-		
-		String confFileTemplate = "";
-		
-		if (ApplicationProfile.isRemote(profile)) {
-			confFileTemplate = EXPORT_CONF_FILE_TEMPLATE;
-		} else if (ApplicationProfile.isCentral(profile)) {
-			confFileTemplate = LOAD_CONF_FILE_TEMPLATE;
-		} else
-			throw new RuntimeException("The conf template file is unkown for profile [" + profile + "]");
-		
-		URL fileUrl = RemoteDataShareCommons.class.getResource(confFileTemplate);
-		
-		return new File(fileUrl.getFile());
 	}
 	
 	@JsonIgnore
@@ -212,11 +190,42 @@ public class RemoteDataShareCommons {
 		synchronized (stringLock) {
 			File eptsEtlConf = this.getSyncConfigurationFile(eptsEtlHomeDir);
 			
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
+			
 			try {
-				FileUtil.copyFile(this.getSyncConfigurationFileTemplate(), eptsEtlConf);
+				String confFileTemplate = "";
+				
+				if (ApplicationProfile.isRemote(getActiveProfile())) {
+					confFileTemplate = EXPORT_CONF_FILE_TEMPLATE;
+				} else if (ApplicationProfile.isCentral(getActiveProfile())) {
+					confFileTemplate = LOAD_CONF_FILE_TEMPLATE;
+				} else
+					throw new RuntimeException("The conf template file is unkown for profiles [" + getActiveProfile() + "]");
+				
+				inputStream = RemoteDataShareCommons.class.getClassLoader().getResourceAsStream(confFileTemplate);
+				
+				outputStream = new FileOutputStream(eptsEtlConf.getAbsolutePath());
+				
+				IOUtils.copy(inputStream, outputStream);
 			}
 			catch (IOException e) {
 				throw new RuntimeException(e);
+			}
+			finally {
+				if (inputStream != null) {
+					try {
+						inputStream.close();
+					}
+					catch (IOException e) {}
+				}
+				
+				if (outputStream != null) {
+					try {
+						outputStream.close();
+					}
+					catch (IOException e) {}
+				}
 			}
 			
 			String observation_date = dataShareInfo != null ? "" + dataShareInfo.getRequestDate().getTime() : "null";
@@ -231,8 +240,8 @@ public class RemoteDataShareCommons {
 		}
 	}
 	
-	public String getActiveProfile() {
-		return this.env.getActiveProfiles()[0];
+	public String[] getActiveProfile() {
+		return this.env.getActiveProfiles();
 	}
 	
 	public void startDataShareProcess(RemoteDataShareInfo dataShareInfo, Logger logger) throws Exception {

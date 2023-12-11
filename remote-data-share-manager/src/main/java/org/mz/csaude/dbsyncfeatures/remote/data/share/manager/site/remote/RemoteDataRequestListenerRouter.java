@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.REMOTE)
+@Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
 public class RemoteDataRequestListenerRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")
@@ -79,7 +79,7 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 
 //@formatter:on
 @Component
-@Profile(ApplicationProfile.REMOTE)
+@Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
 class RemoteDataShareProcessMonitor {
 	
 	@Value("${epts-etl.home.dir}")
@@ -138,7 +138,7 @@ class RemoteDataShareProcessMonitor {
 
 //@formatter:on
 @Component
-@Profile(ApplicationProfile.REMOTE)
+@Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
 class DataShareStarter implements Processor {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());

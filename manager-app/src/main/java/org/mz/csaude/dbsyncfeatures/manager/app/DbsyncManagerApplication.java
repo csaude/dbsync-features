@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 
 @ComponentScans({
-	@ComponentScan("org.mz.csaude.dbsyncfeatures.core.manager"),
+	@ComponentScan("org.mz.csaude.dbsyncfeatures")
 })
 @SpringBootApplication
 public class DbsyncManagerApplication {

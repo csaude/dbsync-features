@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 public class RemoteDataRequestRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")

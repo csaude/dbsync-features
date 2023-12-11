@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog context="central"
-                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-	<changeSet author="jpboane" id="20231121-1209">
+	<changeSet author="jpboane" id="20231121-1209" context="central">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<tableExists tableName="remote_data_share_info"/>
@@ -28,6 +28,29 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 				<constraints nullable="true"/>
 			</column>
 		</createTable>
+	</changeSet>	
 
+	<changeSet author="jpboane" id="20231121-1209" context="db-central">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="remote_data_share_info"/>
+			</not>
+		</preConditions>
+		<comment>Adding remote_data_share_info table</comment>
+
+		<createTable tableName="remote_data_share_info">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="origin_app_location_code" type="VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="request_date" type="DATETIME(3)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="import_finish_date" type="DATETIME(3)">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
 	</changeSet>	
 </databaseChangeLog>

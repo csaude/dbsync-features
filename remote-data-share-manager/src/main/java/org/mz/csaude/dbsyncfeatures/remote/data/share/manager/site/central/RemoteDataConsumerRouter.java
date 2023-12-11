@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 public class RemoteDataConsumerRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.endpoint}")
@@ -97,7 +97,7 @@ public class RemoteDataConsumerRouter extends RouteBuilder {
 
 //@formatter:on
 @Component
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 class CentralDataShareProcessMonitor {
 	
 	@Value("${epts-etl.home.dir}")
@@ -137,7 +137,7 @@ class CentralDataShareProcessMonitor {
 }
 
 @Component
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 class AttachmentReader {
 	
 	public byte[] readAttachmentContent(RemoteDataInfo data) {
@@ -146,7 +146,7 @@ class AttachmentReader {
 }
 
 @Component
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 class DestinationGenerator {
 	
 	public String getDestinationFolder(@ExchangeProperties Map<String, String> properies) {
@@ -159,7 +159,7 @@ class DestinationGenerator {
 }
 
 @Component
-@Profile(ApplicationProfile.CENTRAL)
+@Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 class SiteDataShareFinalizer implements Processor {
 	
 	@Autowired

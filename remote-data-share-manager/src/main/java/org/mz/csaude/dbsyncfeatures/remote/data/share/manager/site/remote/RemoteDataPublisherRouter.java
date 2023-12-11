@@ -13,8 +13,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile(ApplicationProfile.REMOTE)
+@Profile({ ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE })
 public class RemoteDataPublisherRouter extends RouteBuilder {
+	
 	@Value("${remote.data.share.endpoint}")
 	private String artemisEndPoint;
 	
@@ -26,18 +27,16 @@ public class RemoteDataPublisherRouter extends RouteBuilder {
 	
 	@Override
 	public void configure() throws Exception {
-		String srcUri = "file:" + commons.getDataShareDirectory() + "?includeExt=json&recursive=true&directoryMustExist=false&sortBy=file:modified;file:name";
+		String srcUri = "file:" + commons.getDataShareDirectory()
+		        + "?includeExt=json&recursive=true&directoryMustExist=false&sortBy=file:modified;file:name";
 		String dstUri = artemisEndPoint;
-		from(srcUri)
-		.log("Reading the file " + simple("${header.CamelFileAbsolutePath}"))
-		.bean(dataShareLoader)
-		.marshal()
-		.json(JsonLibrary.Jackson, RemoteDataInfo.class)
-		.to(dstUri);
+		from(srcUri).log("Reading the file " + simple("${header.CamelFileAbsolutePath}")).bean(dataShareLoader).marshal()
+		        .json(JsonLibrary.Jackson, RemoteDataInfo.class).to(dstUri);
 	}
 }
 
 @Component
+@Profile({ ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE })
 class DataShareLoader {
 	
 	public RemoteDataInfo loadFile(File file) throws Exception {
