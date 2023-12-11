@@ -6,9 +6,9 @@
     <version>1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>notifications-manager</artifactId>
-  <name>notifications-manager</name>
-  <description>Notifications Manager</description>
+  <artifactId>manager-app</artifactId>
+  <name>manager-app</name>
+  <description>Centralization Core Manager</description>
   <build>
     <resources>
       <resource>
@@ -30,7 +30,7 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <transformers>
                 <transformer>
-                  <mainClass>org.mz.csaude.dbsynfeatures.notifications.manager.NotificationsManagerApplication</mainClass>
+                  <mainClass>org.mz.csaude.dbsyncfeatures.manager.app.DbsyncManagerApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -42,7 +42,19 @@
   <dependencies>
     <dependency>
       <groupId>org.mz.csaude.centralization-features</groupId>
-      <artifactId>core-manager</artifactId>
+      <artifactId>notifications-manager</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mz.csaude.centralization-features</groupId>
+      <artifactId>remote-data-share-manager</artifactId>
+      <version>1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mz.csaude.centralization-features</groupId>
+      <artifactId>updates-manager</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
     </dependency>

@@ -29,7 +29,7 @@
 		<module>remote-data-share-manager</module>
 		<module>notifications-manager</module>
 		<module>updates-manager</module>
-		<module>manager-app</module>		
+		<module>manager-app</module>
 	</modules>
 	
 	<dependencyManagement>
