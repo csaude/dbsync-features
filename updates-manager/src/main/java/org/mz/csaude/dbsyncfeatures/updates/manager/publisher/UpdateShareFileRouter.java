@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile(ApplicationProfile.CENTRAL)
-public class ShareUpdatesFileRouter extends RouteBuilder {
+public class UpdateShareFileRouter extends RouteBuilder {
 
 	@Value("${share.update.root.folder}")
 	private String updateRootFolder;
@@ -20,7 +20,7 @@ public class ShareUpdatesFileRouter extends RouteBuilder {
 	private String shareUpdatesEndpoint;
 
 	@Autowired
-	DataShareLoader dataShareLoader;
+	private UpdateShareLoader dataShareLoader;
 
 	@Override
 	public void configure() {

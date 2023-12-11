@@ -2,6 +2,7 @@ package org.mz.csaude.dbsyncfeatures.core.manager.utils;
 
 import com.jcraft.jsch.JSchException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -9,37 +10,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Service
+@Profile(ApplicationProfile.REMOTE)
 public class SSHCommandExecutor {
-
-    @Value("${eip.update.file.path}")
-    private String eipUpdateFile;
 
     @Value("${db-sync.senderId}")
     private String dbsyncSenderId;
 
-    @Value("${log.path}")
-    private String logPath;
+    @Value("${eip.home}")
+    private String homeDir;
 
-    @Value("${eip.run.update.file.path}")
-    private String eipRunUpdateFile;
-
-    public String getEipUpdateFilePath() {
-        return eipUpdateFile;
+    public String getHomeDir() {
+        return homeDir;
     }
 
     public String getDbsyncSenderId() {
         return dbsyncSenderId;
     }
-
-    public String getLogPath() {
-        return logPath;
-    }
-
-
-    public String getEipRunUpdateFile() {
-        return eipRunUpdateFile;
-    }
-
     public int processBashCommand(String scriptPath) throws JSchException, InterruptedException {
         return runShellScript(scriptPath);
     }
@@ -52,7 +38,10 @@ public class SSHCommandExecutor {
             Process process = processBuilder.start();
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            this.writeLogExecutions(reader);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
 
             int exitCode = process.waitFor();
             System.out.println("Exited with error code: " + exitCode);
@@ -63,21 +52,6 @@ public class SSHCommandExecutor {
         return  1;
     }
 
-    public void writeLogExecutions(BufferedReader reader) throws IOException {
-        if(!Files.exists(Paths.get(getLogPath()))){
-            System.out.println(" Log File not found. Creating it");
-            Files.createFile(Paths.get(getLogPath()));
-        }
-        if (reader != null){
-            FileWriter writer = new FileWriter(getLogPath());
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-                writer.write(line + System.lineSeparator());
-            }
-        }
-
-    }
     public int runShellScript(String scriptPath) {
 
         try {
@@ -86,7 +60,10 @@ public class SSHCommandExecutor {
             InputStream errorStream = chmodProcess.getErrorStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(errorStream));
 
-            this.writeLogExecutions(reader);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
             int chmodExitCode = chmodProcess.waitFor();
 
             if (chmodExitCode != 0) {
@@ -111,7 +88,12 @@ public class SSHCommandExecutor {
             errorThread.join();
 
             //Log the wrun of updates file
-            this.writeLogExecutions(new BufferedReader(new InputStreamReader(process.getErrorStream())));
+            BufferedReader readerScript = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            String linesScript;
+            while ((linesScript = readerScript.readLine()) != null) {
+                System.out.println(linesScript);
+            }
 
             System.out.println("Script execution complete. Exit code: " + exitCode);
             return exitCode;
