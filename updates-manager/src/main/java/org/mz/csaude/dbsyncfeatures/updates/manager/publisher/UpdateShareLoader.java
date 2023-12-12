@@ -1,12 +1,15 @@
 package org.mz.csaude.dbsyncfeatures.updates.manager.publisher;
 
+import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ShareRemoteUpdateFile;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 
 @Component
-public class DataShareLoader {
+@Profile(ApplicationProfile.CENTRAL)
+public class UpdateShareLoader {
     public ShareRemoteUpdateFile loadFile(File file) throws Exception {
         return ShareRemoteUpdateFile.init(file);
     }

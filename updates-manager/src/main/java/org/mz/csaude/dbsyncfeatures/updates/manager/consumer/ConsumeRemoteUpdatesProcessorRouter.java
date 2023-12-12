@@ -1,6 +1,7 @@
 package org.mz.csaude.dbsyncfeatures.updates.manager.consumer;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.updates.manager.service.ApplicationUpdateLogService;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor;
@@ -36,7 +37,7 @@ public class ConsumeRemoteUpdatesProcessorRouter extends RouteBuilder {
 					.onCompletion()
 					.onCompleteOnly()
 					.process( exchange -> {
-						//CustomMessageListenerContainer.enableAcknowledgement();
+						CustomMessageListenerContainer.enableAcknowledgement();
 						Logger.getAnonymousLogger().info("Site has been updated successfully");
 				})
 				.end();

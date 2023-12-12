@@ -11,20 +11,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile(ApplicationProfile.CENTRAL)
-public class ShareUpdatesFileRouter extends RouteBuilder {
+public class UpdateShareFileRouter extends RouteBuilder {
 
 	@Value("${share.update.root.folder}")
 	private String updateRootFolder;
 
-	@Value(" ${artemis.dbsync.central.updates.endpoint}")
+	@Value("${artemis.dbsync.central.updates.endpoint}")
 	private String shareUpdatesEndpoint;
 
 	@Autowired
-	DataShareLoader dataShareLoader;
+	private UpdateShareLoader dataShareLoader;
 
 	@Override
 	public void configure() {
-
 
 		String srcUri = "file:" + updateRootFolder + "?fileName=updates.sh";
 		String dstUri = shareUpdatesEndpoint;
