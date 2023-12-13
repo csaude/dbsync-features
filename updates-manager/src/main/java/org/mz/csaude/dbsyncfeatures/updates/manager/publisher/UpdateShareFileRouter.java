@@ -25,8 +25,9 @@ public class UpdateShareFileRouter extends RouteBuilder {
 	@Override
 	public void configure() {
 
-		String srcUri = "file:" + updateRootFolder + "?fileName=updates.sh";
+		String srcUri = "file:" + updateRootFolder + "?include=.*\\.sh";
 		String dstUri = shareUpdatesEndpoint;
+
 		from(srcUri)
 				.log("Reading the file " + simple("${header.CamelFileNameOnly}"))
 				.bean(dataShareLoader,"loadFile")
