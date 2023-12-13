@@ -27,7 +27,7 @@ public class ApplicationUpdateLogService {
 
     public ApplicationUpdateLog findByCurrentVersion(String fileName) {
         if (!StringUtils.isEmpty(fileName)) {
-            ApplicationUpdateLog ApplicationUpdateLog = applicationUpdateLogRepository.findByCurrentVersion(fileName);
+            return applicationUpdateLogRepository.findByCurrentVersion(fileName);
         }
         return null;
     }

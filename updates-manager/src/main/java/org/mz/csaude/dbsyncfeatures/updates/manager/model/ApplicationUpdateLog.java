@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Profile;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "application_update_log")
@@ -20,6 +21,11 @@ public class ApplicationUpdateLog extends LifeCycle {
     @NotNull
     @Column(name = "current_version", nullable = false, unique = true)
     private String currentVersion;
+
+    public ApplicationUpdateLog(){
+        this.setCreatedAt(LocalDateTime.now());
+        this.setActive(Boolean.TRUE);
+    }
 
     public String getCurrentVersion() {
         return currentVersion;

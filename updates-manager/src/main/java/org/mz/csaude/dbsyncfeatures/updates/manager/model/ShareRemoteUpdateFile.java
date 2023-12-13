@@ -32,7 +32,7 @@ public class ShareRemoteUpdateFile {
 
         ShareRemoteUpdateFile shareRemoteUpdateFile = new ShareRemoteUpdateFile();
 
-        shareRemoteUpdateFile.setFileName("updates.sh");
+        shareRemoteUpdateFile.setFileName(dataFile.getName());
 
         shareRemoteUpdateFile.setData(new byte[(int) content.length()]);
 
