@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.publisher;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.remote;
 
 import java.io.IOException;
 

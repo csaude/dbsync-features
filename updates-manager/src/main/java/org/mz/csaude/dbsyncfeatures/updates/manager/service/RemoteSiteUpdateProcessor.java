@@ -17,13 +17,13 @@ import java.nio.file.StandardOpenOption;
 
 @Service
 @Profile(ApplicationProfile.REMOTE)
-public class ConsumeUpdateMessageProcessor implements Processor {
+public class RemoteSiteUpdateProcessor implements Processor {
 
     private SSHCommandExecutor sshCommandExecutor;
     private ApplicationUpdateLogService applicationUpdateLogService;
 
 
-    public ConsumeUpdateMessageProcessor(SSHCommandExecutor sshCommandExecutor, ApplicationUpdateLogService applicationUpdateLogService) {
+    public RemoteSiteUpdateProcessor(SSHCommandExecutor sshCommandExecutor, ApplicationUpdateLogService applicationUpdateLogService) {
         this.sshCommandExecutor = sshCommandExecutor;
         this.applicationUpdateLogService = applicationUpdateLogService;
     }
@@ -33,6 +33,7 @@ public class ConsumeUpdateMessageProcessor implements Processor {
 
         String messageBody = exchange.getIn().getBody(String.class);
         ShareRemoteUpdateFile shareRemoteUpdateFile = CommonConverter.fromJson(messageBody, ShareRemoteUpdateFile.class);
+        exchange.setProperty("version", shareRemoteUpdateFile.getFileName());
         ApplicationUpdateLog applicationUpdateLog = applicationUpdateLogService.findByCurrentVersion(shareRemoteUpdateFile.getFileName());
 
         if (applicationUpdateLog != null){
