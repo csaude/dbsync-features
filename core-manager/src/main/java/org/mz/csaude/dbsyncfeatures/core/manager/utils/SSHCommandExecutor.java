@@ -71,7 +71,7 @@ public class SSHCommandExecutor {
                 return chmodExitCode;
             }
 
-            ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", scriptPath);
+            ProcessBuilder processBuilder = new ProcessBuilder("sh", "-c", scriptPath);
             Process process = processBuilder.start();
             ProcessOutputReader outputReader = new ProcessOutputReader(process.getInputStream());
             ProcessOutputReader errorReader = new ProcessOutputReader(process.getErrorStream());
@@ -87,15 +87,6 @@ public class SSHCommandExecutor {
             outputThread.join();
             errorThread.join();
 
-            //Log the wrun of updates file
-            BufferedReader readerScript = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-            String linesScript;
-            while ((linesScript = readerScript.readLine()) != null) {
-                System.out.println(linesScript);
-            }
-
-            System.out.println("Script execution complete. Exit code: " + exitCode);
             return exitCode;
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
