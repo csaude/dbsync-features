@@ -18,7 +18,7 @@ public class LiquibaseConfig {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setContexts(StringUtils.join(env.getActiveProfiles(), ","));
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("classpath:/db/changelog/db.changelog-master.xml");
+        liquibase.setChangeLog("classpath:db/changelog/db.changelog-master.xml");
 		liquibase.setDatabaseChangeLogTable("LIQUIBASECHANGELOG");
         liquibase.setDatabaseChangeLogLockTable("LIQUIBASECHANGELOGLOCK");
         liquibase.setShouldRun(true);

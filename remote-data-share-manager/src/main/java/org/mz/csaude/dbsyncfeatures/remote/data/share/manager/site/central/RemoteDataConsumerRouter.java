@@ -66,9 +66,11 @@ public class RemoteDataConsumerRouter extends RouteBuilder {
 		commons.tryToCreateImportDataFolders(logger);
 		
 		//@formatter:off
-		from(srcUri).unmarshal()
+		from(srcUri)
+			.routeId("Remote-Data-Consumer")
+			.unmarshal()
 			.json(JsonLibrary.Jackson, RemoteDataInfo.class)
-		    .log("Message [" + simple(dstUri + "${body.fileName}") + "] was received from " + simple(dstUri + "${body.originAppLocationCode}"))
+		    .log("Message [" + simple("${body.fileName}") + "] was received from " + simple("${body.originAppLocationCode}"))
 		    .choice()
 		    	.when(simple("${body.empty}"))
 		        	.log("Receiveid finish signal for ${body.originAppLocationCode} site. Finishing...").process(shareFinalizer)
@@ -88,10 +90,12 @@ public class RemoteDataConsumerRouter extends RouteBuilder {
 		        		CustomMessageListenerContainer.enableAcknowledgement();
 		        	});
 		
-		int delay = 1000;
-		int period = 1000 * 60 * 1;
+		int delay = 1000*15;
+		int period = 1000 * 60 * 10;
 		
-		from("timer:data-share-monitor?delay=" + delay + "&period=" + period).bean(shareMonitor, "doMonitoring");
+		from("timer:data-share-monitor?delay=" + delay + "&period=" + period)
+		.routeId("Data-Share-Monitor-In-Central-Site")
+		.bean(shareMonitor, "doMonitoring");
 	}
 }
 

@@ -2,11 +2,8 @@
 	"processType": "DB_QUICK_LOAD",
     "modelType": "OPENMRS",
 	
-	"syncRootDirectory_": "/home/eip/application/eptssync",
-	"classPath_": "/home/eip/application/eptssync/epts-etl-api-1.0.jar",
-	
-	"syncRootDirectory": "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\_testing\\quick-load",
-	"classPath": "D:\\PRG\\JEE\\Workspace\\CSaude\\eptssync\\openmrs-module-epts-etl\\api\\target\\original-epts-etl-api-1.0.jar",
+	"syncRootDirectory": "/home/eip/data",
+	"classPath": "/home/eip/epts-etl-api-1.0.jar",
 	
 	"firstExport": false,
 	"automaticStart": true, 
@@ -48,14 +45,6 @@
 	],
 	
 	"tablesConfigurations": [
-		{
-			"tableName": "person",
-			"parents": [{"tableName": "users", " defaultValueDueInconsistency" : 1}],
-			"observationDateFields": ["date_changed", "date_voided"]
-		}
-	],
-	
-	"tablesConfigurations_": [
 			{	
 				"tableName": "users",
 				"parents": [{"tableName": "person", " defaultValueDueInconsistency" : 1}, {"tableName": "users", " defaultValueDueInconsistency" : 1}],

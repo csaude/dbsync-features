@@ -30,8 +30,13 @@ public class RemoteDataPublisherRouter extends RouteBuilder {
 		String srcUri = "file:" + commons.getDataShareDirectory()
 		        + "?includeExt=json&recursive=true&directoryMustExist=false&sortBy=file:modified;file:name";
 		String dstUri = artemisEndPoint;
-		from(srcUri).log("Reading the file " + simple("${header.CamelFileAbsolutePath}")).bean(dataShareLoader).marshal()
-		        .json(JsonLibrary.Jackson, RemoteDataInfo.class).to(dstUri);
+		
+		//@formatter:off
+		from(srcUri)
+			.routeId("Remote-Data-Publisher")
+			.log("Reading the file " + simple("${header.CamelFileAbsolutePath}"))
+			.bean(dataShareLoader).marshal()
+			.json(JsonLibrary.Jackson, RemoteDataInfo.class).to(dstUri);
 	}
 }
 

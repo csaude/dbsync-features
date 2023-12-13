@@ -22,12 +22,11 @@ public class RemoteDataRequestRouter extends RouteBuilder {
 	
 	@Override
 	public void configure() throws Exception {
-		int mins = 1;
-		
-		String shareRequestSourceEndPoint = "scheduler:share-request-reader?initialDelay=" + mins*1000+"&delay=" + mins*60000;
-		
+		String shareRequestSourceEndPoint = "scheduler:share-request-reader?initialDelay=" + 1000*15 +"&delay=" + 1000*60000*15;
+
 		//@formatter:off
 		from(shareRequestSourceEndPoint)
+			.routeId("Remote-Data-Request")
 			.log("Looking for data-share requests...")
 			.setProperty("doLoop", simple("true"))
 	        .loopDoWhile(simple("${exchangeProperty.doLoop}"))
@@ -42,9 +41,12 @@ public class RemoteDataRequestRouter extends RouteBuilder {
 	        		.split(body())
 	        		.log("Processing request for ${body.originAppLocationCode} site")
 	        		.bean(dataShareInfoManager, "setRequestDateToNow")
+	        		.log("Marshalling Message")
 	        		.marshal()
 	        		.json(JsonLibrary.Jackson, RemoteDataShareInfo.class)
+	        		.log("Sending Message to ActiveMQ")
 	        		.to(artemisEndPoint)
+	        		.log("Message sent do activeMQ")
 	        		.unmarshal()
 	        		.json(JsonLibrary.Jackson, RemoteDataShareInfo.class)
 	        		.bean(dataShareInfoManager, "updateRemoteDataShareInfo")

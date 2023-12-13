@@ -236,7 +236,7 @@ public class RemoteDataShareCommons {
 			replaceAllInFile(eptsEtlConf, "openmrs_db_name", openmrsDbName);
 			replaceAllInFile(eptsEtlConf, "openmrs_user_password", openmrsDbPassword);
 			replaceAllInFile(eptsEtlConf, "openmrs_user_name", openmrsDbUser);
-			replaceAllInFile(eptsEtlConf, "observation_date", "" + observation_date);
+			replaceAllInFile(eptsEtlConf, utilities.quote("observation_date"), "" + observation_date);
 		}
 	}
 	

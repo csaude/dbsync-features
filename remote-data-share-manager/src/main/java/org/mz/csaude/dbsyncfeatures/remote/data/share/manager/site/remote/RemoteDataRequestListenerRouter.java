@@ -50,6 +50,7 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 		
 		//@formatter:off
 		from(artemisEndPoint)
+			.routeId("Remote-Data-Request-Listener")
 			.log("Received message from active MQ ${body}")
 			.unmarshal()
 			.json(JsonLibrary.Jackson, RemoteDataShareInfo.class)
@@ -70,9 +71,10 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
         .end();
 		
 		int delay = 1000*60*1;
-		int period = 1000*60*5;
+		int period = 1000*60*15;
 		
 		from("timer:data-share-monitor?delay=" + delay + "&period=" + period)
+			.routeId("Data-Share-Monitor-In-Remote-Site")
 			.bean(shareMonitor, "doMonitoring");
 	}
 }

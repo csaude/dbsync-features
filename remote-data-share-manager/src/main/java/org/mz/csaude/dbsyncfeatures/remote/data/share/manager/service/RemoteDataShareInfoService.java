@@ -33,6 +33,8 @@ public class RemoteDataShareInfoService {
 						r.setImportFinishDate(data.getImportFinishDate());
 					}
 					
+					data.setId(r.getId());
+					
 					remoteDataShareInfoRepository.save(data);
 					
 					break;
