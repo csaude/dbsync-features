@@ -104,9 +104,6 @@ public class RemoteDataConsumerRouter extends RouteBuilder {
 @Profile({ApplicationProfile.CENTRAL, ApplicationProfile.DATA_SHARE_CENTRAL})
 class CentralDataShareProcessMonitor {
 	
-	@Value("${epts-etl.home.dir}")
-	private String eptsEtlHomeDir;
-	
 	@Autowired
 	private RemoteDataShareCommons commons;
 	

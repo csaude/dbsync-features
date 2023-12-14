@@ -9,9 +9,9 @@
 		<version>1.0</version>
 	</parent>
 	
-	<artifactId>manager-app</artifactId>
-	<name>manager-app</name>
-	<description>Centralization Core Manager</description>
+	<artifactId>centralization-features-manager</artifactId>
+	<name>centralization-features-manager</name>
+	<description>Centralization Features Manager</description>
 	
 	<packaging>jar</packaging>
 	

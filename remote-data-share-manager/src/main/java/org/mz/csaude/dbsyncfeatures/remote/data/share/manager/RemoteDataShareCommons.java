@@ -55,8 +55,8 @@ public class RemoteDataShareCommons {
 	@Value("${spring.openmrs-datasource.username}")
 	private String openmrsDbUser;
 	
-	@Value("${epts-etl.home.dir}")
-	private String eptsEtlHomeDir;
+	@Value("${eip.home}")
+	private String eipHomeDir;
 	
 	@Autowired
 	private Environment env;
@@ -100,7 +100,7 @@ public class RemoteDataShareCommons {
 					
 					loadSyncConfigurations(null);
 					
-					syncConfig = SyncConfiguration.loadFromFile(getSyncConfigurationFile(eptsEtlHomeDir));
+					syncConfig = SyncConfiguration.loadFromFile(getSyncConfigurationFile(eipHomeDir));
 				}
 				catch (IOException e) {
 					throw new RuntimeException(e);
@@ -157,7 +157,7 @@ public class RemoteDataShareCommons {
 					
 					loadSyncConfigurations(null);
 					
-					syncConfig = SyncConfiguration.loadFromFile(getSyncConfigurationFile(eptsEtlHomeDir));
+					syncConfig = SyncConfiguration.loadFromFile(getSyncConfigurationFile(eipHomeDir));
 				}
 				catch (IOException e) {
 					throw new RuntimeException(e);
@@ -188,7 +188,7 @@ public class RemoteDataShareCommons {
 	private void loadSyncConfigurations(RemoteDataShareInfo dataShareInfo) {
 		
 		synchronized (stringLock) {
-			File eptsEtlConf = this.getSyncConfigurationFile(eptsEtlHomeDir);
+			File eptsEtlConf = this.getSyncConfigurationFile(eipHomeDir);
 			
 			InputStream inputStream = null;
 			OutputStream outputStream = null;
@@ -259,7 +259,7 @@ public class RemoteDataShareCommons {
 		
 		loadSyncConfigurations(dataShareInfo);
 		
-		File eptsEtlConf = this.getSyncConfigurationFile(eptsEtlHomeDir);
+		File eptsEtlConf = this.getSyncConfigurationFile(eipHomeDir);
 		
 		if (ApplicationProfile.isCentral(getActiveProfile())) {
 			String srcFolderList = "";
