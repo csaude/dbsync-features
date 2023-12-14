@@ -11,35 +11,39 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "application_update_log")
-@Profile(ApplicationProfile.REMOTE)
-public class ApplicationUpdateLog extends LifeCycle {
-
+@Table(name = "updated_site")
+@Profile(ApplicationProfile.CENTRAL)
+public class UpdatedSite extends LifeCycle {
     @NotNull
-    @Column(name = "site_id", nullable = false, unique = true)
+    @Column(name = "site_id", nullable = false)
     private String siteId;
     @NotNull
-    @Column(name = "current_version", nullable = false, unique = true)
-    private String currentVersion;
+    @Column(name = "version", nullable = false)
+    private String version;
 
-    public ApplicationUpdateLog(){
+    public UpdatedSite(){
+
+    }
+
+    public UpdatedSite(String siteId, String version){
+        this.siteId = siteId;
+        this.version = version;
         this.setCreatedAt(new Date());
         this.setActive(Boolean.TRUE);
     }
-
-    public String getCurrentVersion() {
-        return currentVersion;
-    }
-
-    public void setCurrentVersion(String currentVersion) {
-        this.currentVersion = currentVersion;
-    }
-
     public String getSiteId() {
         return siteId;
     }
 
     public void setSiteId(String siteId) {
         this.siteId = siteId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog context="central"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet author="dchirinda" id="20231213-1100">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="updated_site"/>
+			</not>
+		</preConditions>
+		<comment>Adding updated_site table</comment>
+
+		<createTable tableName="updated_site">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="site_id" type="VARCHAR(100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="version" type="VARCHAR(255)">
+				<constraints unique="true" nullable="false"/>
+			</column>
+			<column name="created_at" type="DATETIME(3)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="updated_at" type="DATETIME(3)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="is_active" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

@@ -1,26 +1,26 @@
 package org.mz.csaude.dbsyncfeatures.core.manager.entity;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @MappedSuperclass
 public abstract  class Auditable extends Base {
    	private static final long serialVersionUID = 2248918162173231925L;
 
 	@Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     @Column(name = "updated_at", nullable = true)
     private LocalDateTime updatedAt;
 
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 

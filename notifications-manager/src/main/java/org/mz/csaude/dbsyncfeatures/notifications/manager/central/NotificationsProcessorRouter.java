@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.consumer;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
