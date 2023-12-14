@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.mz.csaude.dbsyncfeatures.notifications.manager.consumer.NotificationsProcessorRouter;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.central.NotificationsProcessorRouter;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.service.EmailNotificationLogService;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.CommonConverter;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.EmailNotificationLog;

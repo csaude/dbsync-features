@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.updates.manager.publisher;
+package org.mz.csaude.dbsyncfeatures.updates.manager.central;
 
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ShareRemoteUpdateFile;

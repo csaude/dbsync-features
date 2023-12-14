@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.updates.manager.publisher;
+package org.mz.csaude.dbsyncfeatures.updates.manager.central;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
