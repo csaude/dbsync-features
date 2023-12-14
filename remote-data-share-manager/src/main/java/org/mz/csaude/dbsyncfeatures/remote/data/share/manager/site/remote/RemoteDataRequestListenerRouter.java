@@ -41,9 +41,6 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 	@Autowired
 	private RemoteDataShareProcessMonitor shareMonitor;
 	
-	@Value("${epts-etl.home.dir}")
-	private String eptsEtlHomeDir;
-	
 	@Override
 	public void configure() throws Exception {
 		dataShareInfoManager.setCurrentOriginLocation(senderId);
@@ -84,8 +81,8 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 @Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
 class RemoteDataShareProcessMonitor {
 	
-	@Value("${epts-etl.home.dir}")
-	private String eptsEtlHomeDir;
+	@Value("${eip.home}")
+	private String eipHomeDir;
 	
 	@Autowired
 	private RemoteDataShareCommons commons;
@@ -107,7 +104,7 @@ class RemoteDataShareProcessMonitor {
 			//If the monitoring file exists, mean that there were initialized a process but the process was not finalized yet
 			if (monitoringFile.exists()) {
 				
-				ProcessStarter p = new ProcessStarter(new String[] { commons.getSyncConfigurationFilePath(eptsEtlHomeDir) });
+				ProcessStarter p = new ProcessStarter(new String[] { commons.getSyncConfigurationFilePath(eipHomeDir) });
 				p.init();
 				
 				//This mean the process is finished, so lets remove the monitoring file
