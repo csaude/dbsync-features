@@ -37,7 +37,7 @@ public class RemoteDataShareCommons {
 	
 	private ProcessStarter dataShareProcessStarter;
 	
-	@Value("${db-sync.senderId}")
+	@Value("${db-sync.senderId:no-id} ")
 	private String senderId;
 	
 	@Value("${openmrs.db.host}")
@@ -203,7 +203,11 @@ public class RemoteDataShareCommons {
 				} else
 					throw new RuntimeException("The conf template file is unkown for profiles [" + getActiveProfile() + "]");
 				
+				eptsEtlConf.getParentFile().mkdirs();
+				
 				inputStream = RemoteDataShareCommons.class.getClassLoader().getResourceAsStream(confFileTemplate);
+				
+				
 				
 				outputStream = new FileOutputStream(eptsEtlConf.getAbsolutePath());
 				
