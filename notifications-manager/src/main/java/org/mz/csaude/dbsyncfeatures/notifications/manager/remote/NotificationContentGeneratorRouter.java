@@ -35,7 +35,9 @@ public class NotificationContentGeneratorRouter extends RouteBuilder {
 		String srcUri = "file:" + notificationContentRootFolder + "?includeExt=json";
 		String dstUri = notificationsEndpoint;
 		
-		from(srcUri).unmarshal()
+		from(srcUri)
+				.routeId("generate-email-content-notification")
+				.unmarshal()
 		.json(JsonLibrary.Jackson, NotificationInfoSrc.class)
 		.choice()
 			.when(simple("${body.allNotificationContentExists}"))

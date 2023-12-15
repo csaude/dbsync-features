@@ -29,6 +29,7 @@ public class UpdateShareFileRouter extends RouteBuilder {
 		String dstUri = shareUpdatesEndpoint;
 
 		from(srcUri)
+				.routeId("share-update-file")
 				.log("Reading the file " + simple("${header.CamelFileNameOnly}"))
 				.bean(dataShareLoader,"loadFile")
 				.marshal()

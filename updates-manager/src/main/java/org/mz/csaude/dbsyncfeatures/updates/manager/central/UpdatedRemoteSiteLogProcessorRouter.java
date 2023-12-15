@@ -26,6 +26,7 @@ public class UpdatedRemoteSiteLogProcessorRouter extends RouteBuilder {
 		String dstUri = "log:mylog";
 
 		from(srcUri)
+				.routeId("updated-remote-site-log")
 				.process(new LogUpdatedRemoteSiteProcessor(updatedSiteService))
 				.to(dstUri)
 					.onCompletion()

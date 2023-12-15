@@ -34,6 +34,7 @@ public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
 		String dstUri = "log:mylog";
 
 		from(srcUri)
+				.routeId("process-update-file")
 				.process(new RemoteSiteUpdateProcessor(sshCommandExecutor, applicationUpdateLogService))
 				.to(dstUri)
 					.onCompletion()
