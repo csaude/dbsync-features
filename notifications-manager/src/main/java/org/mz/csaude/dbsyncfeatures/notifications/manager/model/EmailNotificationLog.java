@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.mz.csaude.dbsyncfeatures.core.manager.entity.Base;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.utils.NotificationType;
 import org.springframework.context.annotation.Profile;
 
 import com.sun.istack.NotNull;
@@ -28,7 +31,8 @@ public class EmailNotificationLog extends Base {
 	
 	@NotNull
 	@Column(name = "message_type")
-	private String messageType;
+	@Enumerated(EnumType.STRING)
+	private NotificationType messageType;
 	
 	@NotNull
 	@Column(name = "subject", length = 255)
@@ -46,11 +50,11 @@ public class EmailNotificationLog extends Base {
 		this.siteId = siteId;
 	}
 	
-	public String getMessageType() {
+	public NotificationType getMessageType() {
 		return messageType;
 	}
 	
-	public void setMessageType(String messageType) {
+	public void setMessageType(NotificationType messageType) {
 		this.messageType = messageType;
 	}
 	
