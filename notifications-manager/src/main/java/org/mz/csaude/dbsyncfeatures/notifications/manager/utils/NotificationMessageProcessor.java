@@ -50,8 +50,10 @@ public class NotificationMessageProcessor implements Processor {
 			notificationService.emailService(notificationInfo);
 			log.info("Notification Message for site: " + notificationInfo.getMailSiteOrigin() + "for type "
 			        + notificationInfo.getMailSubject() + " were delivered successfully to user");
+			exchange.setProperty("emailSent", true);
 		}
 		catch (Exception e) {
+			exchange.setProperty("emailSent", false);
 			log.error("An error occurred trying to process message: " + e.getMessage());
 			log.error(e.getCause().toString());
 		}
@@ -66,9 +68,6 @@ public class NotificationMessageProcessor implements Processor {
 		if (notificationSubject.startsWith("EIP REMOTO - ESTADO DE ACTUALIZACAO")) {
 			return NotificationType.UPDATE_TRY;
 		}
-		if (notificationSubject.startsWith("EIP REMOTO - SETUP INFO")) {
-			return NotificationType.DBSYNC_INITIAL_SETUP;
-		}
 		if (notificationSubject.startsWith("EIP REMOTO - LIQUIBASE LOCK INFO")) {
 			return NotificationType.LIQUIBASE_UNLOCK;
 		}
@@ -79,10 +78,10 @@ public class NotificationMessageProcessor implements Processor {
 			return NotificationType.LOCATION_HARMONIZATION_STARTED;
 		}
 		if (notificationSubject.startsWith("EIP REMOTO - RELATORIO DA HARMONIZACAO DE LOCAIS")) {
-			return NotificationType.LOCATION_HARMONIZATION_STARTED;
+			return NotificationType.LOCATION_HARMONIZATION_FINISHED;
 		}
 		
-		throw new RuntimeException("Unkown Message Type");
+		throw new RuntimeException("Unknown Message Type");
 		
 	}
 }

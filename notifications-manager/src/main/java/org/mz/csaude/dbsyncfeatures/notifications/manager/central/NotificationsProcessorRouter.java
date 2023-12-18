@@ -39,9 +39,14 @@ public class NotificationsProcessorRouter extends RouteBuilder {
 		String dstUri = "log:mylog";
 		
 		MailConfig mailConfig = new MailConfig(host, port, username, password);
-		from(srcUri).process(new NotificationMessageProcessor(mailConfig, emailNotificationLogService)).to(dstUri)
+		from(srcUri)
+				.routeId("send-email-notification")
+				.process(new NotificationMessageProcessor(mailConfig, emailNotificationLogService)).to(dstUri)
 		        .onCompletion().onCompleteOnly().process(exchange -> {
-			        CustomMessageListenerContainer.enableAcknowledgement();
+					boolean emailSend = (boolean) exchange.getProperty("emailSent");
+					if (emailSend){
+						CustomMessageListenerContainer.enableAcknowledgement();
+					}
 		        }).end();
 	}
 }
