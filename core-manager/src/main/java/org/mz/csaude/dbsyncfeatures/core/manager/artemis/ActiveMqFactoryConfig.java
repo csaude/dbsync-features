@@ -50,9 +50,12 @@ public class ActiveMqFactoryConfig {
 		cf.setBrokerURL(failoverUrl);
 		cf.setUserName(artemisUser);
 		cf.setPassword(artemisPassword);
-		final String clientId = env.getProperty("activemq.clientId");
+		String clientId = env.getProperty("activemq.clientId");
 		
 		if (StringUtils.isNotBlank(clientId)) {
+			
+			clientId += "_cfeatures";
+			
 			cf.setClientID(clientId);
 		}
 		
