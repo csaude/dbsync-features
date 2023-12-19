@@ -9,7 +9,6 @@
 	"firstExport": false,
 	"automaticStart": true, 
 	"observationDate": "observation_date",
-	"finalizerFullClassName": "org.openmrs.module.epts.etl.dbquickexport.controller.DbQuickExportFinalizer",
 
 	"appsInfo":[
 

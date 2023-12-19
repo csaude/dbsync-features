@@ -14,6 +14,7 @@ import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.RemoteDataShareCom
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.model.RemoteDataShareInfo;
 import org.mz.csaude.dbsyncfeatures.remote.data.share.manager.utils.DataShareInfoManager;
 import org.openmrs.module.epts.etl.controller.ProcessStarter;
+import org.openmrs.module.epts.etl.dbquickexport.controller.DbQuickExportFinalizer;
 import org.openmrs.module.epts.etl.utilities.db.conn.DBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
+@Profile({ ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE })
 public class RemoteDataRequestListenerRouter extends RouteBuilder {
 	
 	@Value("${remote.data.share.request.endpoint}")
@@ -78,7 +79,7 @@ public class RemoteDataRequestListenerRouter extends RouteBuilder {
 
 //@formatter:on
 @Component
-@Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
+@Profile({ ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE })
 class RemoteDataShareProcessMonitor {
 	
 	@Value("${eip.home}")
@@ -109,9 +110,22 @@ class RemoteDataShareProcessMonitor {
 				
 				//This mean the process is finished, so lets remove the monitoring file
 				if (p.getCurrentController().processIsAlreadyFinished()) {
-					logger.info("The share process is finihed...! Removing the monitoring file...");
 					
-					FileUtil.deleteFile(monitoringFile);
+					//Check if all files were published.
+					
+					if (!commons.checkIfImportDirectoryHasData()) {
+						logger.info("All data were published. Finalizing the data share process");
+						
+						DbQuickExportFinalizer finalizer = new DbQuickExportFinalizer(p.getCurrentController());
+
+						finalizer.performeFinalizationTasks();
+						
+						logger.info("Removing the monitoring file...");
+						
+						FileUtil.deleteFile(monitoringFile);
+					}else {
+						logger.info("The generation of share file is finished but the data is not full published! Waiting....");
+					}
 				} else {
 					//The process has not finished. Let check if it is running
 					
@@ -137,7 +151,7 @@ class RemoteDataShareProcessMonitor {
 
 //@formatter:on
 @Component
-@Profile({ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE})
+@Profile({ ApplicationProfile.REMOTE, ApplicationProfile.DATA_SHARE_REMOTE })
 class DataShareStarter implements Processor {
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
