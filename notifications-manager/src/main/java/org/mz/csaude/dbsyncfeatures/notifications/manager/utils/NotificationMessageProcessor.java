@@ -55,13 +55,16 @@ public class NotificationMessageProcessor implements Processor {
 		catch (Exception e) {
 			exchange.setProperty("emailSent", false);
 			log.error("An error occurred trying to process message: " + e.getMessage());
-			log.error(e.getCause().toString());
+			
+			if (e.getCause() != null) {
+				log.error(e.getCause().toString());
+			}
 		}
 		
 	}
 	
 	NotificationType determineNotificationType(String notificationSubject) {
-		if (notificationSubject.startsWith("EIP REMOTO - SETUP INFO")) {
+		if (notificationSubject.startsWith("EIP REMOTO - INITIAL SETUP INFO")) {
 			return NotificationType.DBSYNC_INITIAL_SETUP;
 		}
 		
@@ -81,7 +84,7 @@ public class NotificationMessageProcessor implements Processor {
 			return NotificationType.LOCATION_HARMONIZATION_FINISHED;
 		}
 		
-		throw new RuntimeException("Unknown Message Type");
+		throw new RuntimeException("Unknown Message Type [" + notificationSubject + "]");
 		
 	}
 }
