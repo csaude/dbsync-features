@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.CommonConverter;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.central.NotificationsProcessorRouter;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.EmailNotificationLog;
@@ -11,9 +12,11 @@ import org.mz.csaude.dbsyncfeatures.notifications.manager.model.NotificationInfo
 import org.mz.csaude.dbsyncfeatures.notifications.manager.service.EmailNotificationLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile(ApplicationProfile.CENTRAL)
 public class NotificationMessageProcessor implements Processor {
 	
 	private MailConfig mailConfig;
