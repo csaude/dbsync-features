@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
 
 import org.apache.commons.io.IOUtils;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
@@ -238,7 +239,7 @@ public class RemoteDataShareCommons {
 			replaceAllInFile(eptsEtlConf, "openmrs_db_host", openmrsDbHost);
 			replaceAllInFile(eptsEtlConf, "openmrs_db_port", openmrsDbPort);
 			replaceAllInFile(eptsEtlConf, "openmrs_db_name", openmrsDbName);
-			replaceAllInFile(eptsEtlConf, "openmrs_user_password", openmrsDbPassword);
+			replaceAllInFile(eptsEtlConf, "openmrs_user_password", Matcher.quoteReplacement(openmrsDbPassword));
 			replaceAllInFile(eptsEtlConf, "openmrs_user_name", openmrsDbUser);
 			replaceAllInFile(eptsEtlConf, utilities.quote("observation_date"), "" + observation_date);
 		}
