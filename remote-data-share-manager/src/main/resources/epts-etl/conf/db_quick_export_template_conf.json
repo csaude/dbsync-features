@@ -19,7 +19,10 @@
 				"dataBaseUserName": "openmrs_user_name",
 				"dataBaseUserPassword": "openmrs_user_password",
 				"connectionURI": "jdbc:mysql://openmrs_db_host:openmrs_db_port/openmrs_db_name?autoReconnect=true&useSSL=false",
-				"driveClassName": "com.mysql.cj.jdbc.Driver"
+				"driveClassName": "com.mysql.cj.jdbc.Driver",
+				"maxActiveConnections": 10,
+				"maxIdleConnections": 5,
+				"minIdleConnections": 2
 			}
 		}
 	],

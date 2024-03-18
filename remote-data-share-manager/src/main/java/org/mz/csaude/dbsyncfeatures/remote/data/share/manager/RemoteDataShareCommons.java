@@ -118,7 +118,7 @@ public class RemoteDataShareCommons {
 		
 		logger.info("Check import source directories");
 		
-		for (String tableName : syncConfig.parteTableConfigurationsToString()) {
+		for (String tableName : syncConfig.parseEtlConfigurationsToString_()) {
 			File dir = new File(basePath + File.separator + tableName);
 			
 			if (!dir.exists()) {
@@ -207,8 +207,6 @@ public class RemoteDataShareCommons {
 				eptsEtlConf.getParentFile().mkdirs();
 				
 				inputStream = RemoteDataShareCommons.class.getClassLoader().getResourceAsStream(confFileTemplate);
-				
-				
 				
 				outputStream = new FileOutputStream(eptsEtlConf.getAbsolutePath());
 				
