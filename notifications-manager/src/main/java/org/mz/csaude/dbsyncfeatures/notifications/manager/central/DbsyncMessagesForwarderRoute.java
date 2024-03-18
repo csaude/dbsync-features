@@ -6,8 +6,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.component.jms.JmsConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -41,16 +39,16 @@ public class DbsyncMessagesForwarderRoute extends RouteBuilder {
 	@Override
 	public void configure() {
 		String srcUri = "activemq:topic:openmrs.sync.topic?subscriptionDurable=true&durableSubscriptionName=DB-SYNC-RECEIVER";
-		String dstUri = "activemq:queue:openmrs.sync.topic";
+		String dstUri = "activemq:queue:openmrs.dbsync";
 		
-        // Use the specific JMS configuration
-        getContext().addComponent("activemq", JmsComponent.jmsComponentAutoAcknowledge(getConnectionFactory()));
-    
+		getContext().addComponent("activemq", JmsComponent.jmsComponentAutoAcknowledge(getConnectionFactory()));
 		
 		//@formatter:off
 		from(srcUri)
 		.routeId("dbsync-msg-forwarder")
-		.log("Receiving message");
+		.log("Start forwarding message ${body} from activemq topic and forwording it to queue")
+		.to(dstUri)
+		.log("Forwad done!");
 	}
 	
 	private ConnectionFactory getConnectionFactory() {
@@ -65,7 +63,7 @@ public class DbsyncMessagesForwarderRoute extends RouteBuilder {
 		cf.setBrokerURL(failoverUrl);
 		cf.setUserName(artemisUser);
 		cf.setPassword(artemisPassword);
-		cf.setClientID("DB-SYNC-REC.DB-SYNC-RECEIVER");
+		cf.setClientID("DB-SYNC-REC");
 		
 		RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
 		redeliveryPolicy.setMaximumRedeliveries(RedeliveryPolicy.NO_MAXIMUM_REDELIVERIES);
