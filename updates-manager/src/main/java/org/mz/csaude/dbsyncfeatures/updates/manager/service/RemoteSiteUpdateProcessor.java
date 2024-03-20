@@ -2,6 +2,7 @@ package org.mz.csaude.dbsyncfeatures.updates.manager.service;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.CommonConverter;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor;
@@ -48,14 +49,12 @@ public class RemoteSiteUpdateProcessor implements Processor {
 
         File file = new File(updateFile);
         Files.write(file.toPath(), shareRemoteUpdateFile.getData(), StandardOpenOption.TRUNCATE_EXISTING);
+        this.sshCommandExecutor.setFilePath(updateFile);
 
-        int executionStatus = this.sshCommandExecutor.processBashCommand(updateFile);
-
-        if (executionStatus == 0){
-            ApplicationUpdateLog newApplicationUpdateLog = new ApplicationUpdateLog();
-            newApplicationUpdateLog.setCurrentVersion(shareRemoteUpdateFile.getFileName());
-            newApplicationUpdateLog.setSiteId(this.sshCommandExecutor.getDbsyncSenderId());
-            this.applicationUpdateLogService.createEntity(newApplicationUpdateLog);
-        }
+        CustomMessageListenerContainer.enableAcknowledgement();
+        ApplicationUpdateLog newApplicationUpdateLog = new ApplicationUpdateLog();
+        newApplicationUpdateLog.setCurrentVersion(shareRemoteUpdateFile.getFileName());
+        newApplicationUpdateLog.setSiteId(this.sshCommandExecutor.getDbsyncSenderId());
+        this.applicationUpdateLogService.createEntity(newApplicationUpdateLog);
     }
 }

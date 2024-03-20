@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Profile(ApplicationProfile.CENTRAL)
 public class LogUpdatedRemoteSiteProcessor implements Processor {
 
-    private UpdatedSiteService updatedSiteService;
+    private final UpdatedSiteService updatedSiteService;
 
     public LogUpdatedRemoteSiteProcessor(UpdatedSiteService updatedSiteService) {
         this.updatedSiteService = updatedSiteService;

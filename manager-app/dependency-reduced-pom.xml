@@ -48,12 +48,6 @@
     </dependency>
     <dependency>
       <groupId>org.mz.csaude.centralization-features</groupId>
-      <artifactId>remote-data-share-manager</artifactId>
-      <version>1.0</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mz.csaude.centralization-features</groupId>
       <artifactId>updates-manager</artifactId>
       <version>1.0</version>
       <scope>provided</scope>

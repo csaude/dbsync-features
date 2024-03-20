@@ -19,6 +19,16 @@ public class SSHCommandExecutor {
     @Value("${eip.home}")
     private String homeDir;
 
+    private String filePath;
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     public String getHomeDir() {
         return homeDir;
     }

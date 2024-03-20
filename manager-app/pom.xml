@@ -23,10 +23,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mz.csaude.centralization-features</groupId>
-			<artifactId>remote-data-share-manager</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mz.csaude.centralization-features</groupId>
 			<artifactId>updates-manager</artifactId>
 		</dependency>		
 		<dependency>

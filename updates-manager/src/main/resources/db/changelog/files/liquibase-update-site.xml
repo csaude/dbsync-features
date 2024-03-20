@@ -35,4 +35,10 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 			</column>
 		</createTable>
 	</changeSet>
+
+	<changeSet author="dchirinda" id="20240320-1100">
+		<comment>Removing unique constraint from version column</comment>
+		<dropUniqueConstraint columnNames="version" constraintName="version" tableName="updated_site"/>
+	</changeSet>
+
 </databaseChangeLog>

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Logger;
+
 @Component
 @Profile(ApplicationProfile.REMOTE)
 public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
@@ -43,10 +45,17 @@ public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
 						CustomMessageListenerContainer.enableAcknowledgement();
 						String version = exchange.getProperty("version", String.class);
 						exchange.getMessage().setBody(new UpdatedSite(this.sshCommandExecutor.getDbsyncSenderId(), version));
-				})
+					})
 				.marshal()
 				.json(JsonLibrary.Jackson, UpdatedSite.class)
 				.to(successUpdateNotificationQueue)
+					.process( exchange -> {
+						if (exchange.getException() == null) {
+							Logger.getAnonymousLogger().info("Executing update Script");
+							this.sshCommandExecutor.processBashCommand(sshCommandExecutor.getFilePath());
+						}
+
+					})
 				.end();
 	}
 }

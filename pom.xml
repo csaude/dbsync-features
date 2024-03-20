@@ -18,7 +18,7 @@
 	<description>Centralization Features</description>
 	
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<camel.version>3.14.1</camel.version>
 		<features.version>1.0</features.version>	
 		<spring.version>2.7.18</spring.version>
@@ -26,7 +26,6 @@
 
 	<modules>
 		<module>core-manager</module>		
-		<module>remote-data-share-manager</module>
 		<module>notifications-manager</module>
 		<module>updates-manager</module>
 		<module>manager-app</module>
@@ -37,11 +36,6 @@
 			<dependency>
 				<groupId>org.mz.csaude.centralization-features</groupId>
 				<artifactId>core-manager</artifactId>
-				<version>${features.version}</version>		
-			</dependency>
-			<dependency>
-				<groupId>org.mz.csaude.centralization-features</groupId>
-				<artifactId>remote-data-share-manager</artifactId>
 				<version>${features.version}</version>		
 			</dependency>
 			<dependency>
