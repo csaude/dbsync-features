@@ -46,9 +46,8 @@ public class DbsyncMessagesForwarderRoute extends RouteBuilder {
 		//@formatter:off
 		from(srcUri)
 		.routeId("dbsync-msg-forwarder")
-		.log("Start forwarding message ${body} from activemq topic and forwording it to queue")
-		.to(dstUri)
-		.log("Forwad done!");
+		.log("Forwarding message from activemq openmrs.sync.topic to openmrs.dbsync queue")
+		.to(dstUri);
 	}
 	
 	private ConnectionFactory getConnectionFactory() {
@@ -63,7 +62,7 @@ public class DbsyncMessagesForwarderRoute extends RouteBuilder {
 		cf.setBrokerURL(failoverUrl);
 		cf.setUserName(artemisUser);
 		cf.setPassword(artemisPassword);
-		cf.setClientID("DB-SYNC-REC");
+		cf.setClientID("DB-SYNC-REC-FW");
 		
 		RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
 		redeliveryPolicy.setMaximumRedeliveries(RedeliveryPolicy.NO_MAXIMUM_REDELIVERIES);
