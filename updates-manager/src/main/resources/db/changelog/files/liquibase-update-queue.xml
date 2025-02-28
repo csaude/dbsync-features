@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog context="central"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+	<changeSet author="dchirinda" id="20250226-1100">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="update_queue"/>
+			</not>
+		</preConditions>
+		<comment>Adding update_queue table</comment>
+
+		<createTable tableName="update_queue">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints nullable="false" primaryKey="true"/>
+			</column>
+			<column name="script_path" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="sites_to_update_path" type="VARCHAR(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="VARCHAR(255)">
+			</column>
+			<column name="update_all" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="processed" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="is_active" type="BOOLEAN">
+				<constraints nullable="false"/>
+			</column>
+			<column name="created_at" type="DATETIME(3)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="updated_at" type="DATETIME(3)">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

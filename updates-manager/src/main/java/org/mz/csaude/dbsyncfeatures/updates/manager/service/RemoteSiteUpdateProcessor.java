@@ -4,8 +4,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
-import org.mz.csaude.dbsyncfeatures.core.manager.utils.CommonConverter;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor;
+import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ApplicationUpdateLog;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ShareRemoteUpdateFile;
 import org.springframework.context.annotation.Profile;
@@ -33,7 +33,7 @@ public class RemoteSiteUpdateProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
 
         String messageBody = exchange.getIn().getBody(String.class);
-        ShareRemoteUpdateFile shareRemoteUpdateFile = CommonConverter.fromJson(messageBody, ShareRemoteUpdateFile.class);
+        ShareRemoteUpdateFile shareRemoteUpdateFile = Utils.fromJson(messageBody, ShareRemoteUpdateFile.class);
         exchange.setProperty("version", shareRemoteUpdateFile.getFileName());
         ApplicationUpdateLog applicationUpdateLog = applicationUpdateLogService.findByCurrentVersion(shareRemoteUpdateFile.getFileName());
 
