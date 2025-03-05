@@ -41,11 +41,6 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 		<dropUniqueConstraint columnNames="version" constraintName="version" tableName="updated_site"/>
 	</changeSet>
 
-	<changeSet author="dchirinda" id="2020228-1101">
-		<comment>Removing unique constraint from current_version column</comment>
-		<dropUniqueConstraint columnNames="current_version" constraintName="current_version" tableName="application_update_log"/>
-	</changeSet>
-
 	<changeSet author="dchirinda" id="20250228-1103">
 		<addColumn tableName="updated_site">
 			<column name="script_name" type="VARCHAR(100)"/>
@@ -62,7 +57,6 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 		</addColumn>
 		<addColumn tableName="updated_site">
 			<column name="received_date" type="DATETIME(3)">
-				<constraints nullable="false" />
 			</column>
 		</addColumn>
 	</changeSet>

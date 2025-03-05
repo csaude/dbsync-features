@@ -62,6 +62,9 @@ public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
 							Logger.getAnonymousLogger().info("Processing of remote site update finished.");
 
 							exchange.getMessage().setBody(this.createUpdateSiteLog(fileName));
+						}else{
+							CustomMessageListenerContainer.enableAcknowledgement();
+							exchange.getMessage().setBody(null);
 						}
 					})
 				.marshal()
