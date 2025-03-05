@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -120,5 +121,8 @@ public class Utils {
 		}
 	}
 
-	
+	public static <T> T fromBytes(byte[] bytes, Class<T> clazz) throws JsonProcessingException {
+		String json = new String(bytes, StandardCharsets.UTF_8);
+		return defaultJsonObjectMapper().readValue(json, clazz);
+	}
 }

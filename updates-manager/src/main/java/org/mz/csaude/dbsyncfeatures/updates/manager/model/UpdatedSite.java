@@ -21,6 +21,18 @@ public class UpdatedSite extends LifeCycle {
     @Column(name = "version", nullable = false)
     private String version;
 
+    @Column(name="script_name")
+    private String scriptName;
+
+    @Column(name="log")
+    private String log;
+
+    @Column(name= "executed")
+    private boolean executed;
+
+    @Column(name="received_date")
+    private Date receivedDate;
+
     public UpdatedSite(){
 
     }
@@ -45,5 +57,37 @@ public class UpdatedSite extends LifeCycle {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getScriptName() {
+        return scriptName;
+    }
+
+    public void setScriptName(String scriptName) {
+        this.scriptName = scriptName;
+    }
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
+    }
+
+    public boolean isExecuted() {
+        return executed;
+    }
+
+    public void setExecuted(boolean executed) {
+        this.executed = executed;
+    }
+
+    public Date getReceivedDate() {
+        return receivedDate;
+    }
+
+    public void setReceivedDate(Date receivedDate) {
+        this.receivedDate = receivedDate;
     }
 }

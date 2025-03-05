@@ -1,5 +1,6 @@
 package org.mz.csaude.dbsyncfeatures.updates.manager.service;
 
+import com.jcraft.jsch.JSchException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
@@ -7,11 +8,15 @@ import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ApplicationUpdateLog;
+import org.mz.csaude.dbsyncfeatures.updates.manager.model.ScriptInfo;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ShareRemoteUpdateFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -19,6 +24,7 @@ import java.nio.file.StandardOpenOption;
 @Service
 @Profile(ApplicationProfile.REMOTE)
 public class RemoteSiteUpdateProcessor implements Processor {
+    private static final Logger logger = LoggerFactory.getLogger(RemoteSiteUpdateProcessor.class);
 
     private SSHCommandExecutor sshCommandExecutor;
     private ApplicationUpdateLogService applicationUpdateLogService;
@@ -31,13 +37,22 @@ public class RemoteSiteUpdateProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-
+        logger.info(" Starting the Processing of remote site update");
         String messageBody = exchange.getIn().getBody(String.class);
         ShareRemoteUpdateFile shareRemoteUpdateFile = Utils.fromJson(messageBody, ShareRemoteUpdateFile.class);
-        exchange.setProperty("version", shareRemoteUpdateFile.getFileName());
+        ScriptInfo scriptInfo =  Utils.fromBytes(shareRemoteUpdateFile.getData(), ScriptInfo.class);
+
         ApplicationUpdateLog applicationUpdateLog = applicationUpdateLogService.findByCurrentVersion(shareRemoteUpdateFile.getFileName());
 
+        // Validate if the site is allowed to update
+        if (!scriptInfo.getSitesToUpdate().contains(this.sshCommandExecutor.getDbsyncSenderId())) {
+            logger.info("The site {} is not allowed to be updated.", this.sshCommandExecutor.getDbsyncSenderId());
+            return;
+        }
+
         if (applicationUpdateLog != null){
+            exchange.setProperty("executeScript", Boolean.FALSE);
+
             return;
         }
 
@@ -48,12 +63,21 @@ public class RemoteSiteUpdateProcessor implements Processor {
         }
 
         File file = new File(updateFile);
-        Files.write(file.toPath(), shareRemoteUpdateFile.getData(), StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(file.toPath(), scriptInfo.getScriptData().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
         this.sshCommandExecutor.setFilePath(updateFile);
 
         CustomMessageListenerContainer.enableAcknowledgement();
+
+        this.createApplicationUpdateLog(shareRemoteUpdateFile.getFileName());
+
+        exchange.setProperty("fileName", shareRemoteUpdateFile.getFileName());
+        exchange.setProperty("executeScript", Boolean.TRUE);
+    }
+
+    public void createApplicationUpdateLog(String fileName) throws JSchException, InterruptedException, IOException {
         ApplicationUpdateLog newApplicationUpdateLog = new ApplicationUpdateLog();
-        newApplicationUpdateLog.setCurrentVersion(shareRemoteUpdateFile.getFileName());
+
+        newApplicationUpdateLog.setCurrentVersion(fileName);
         newApplicationUpdateLog.setSiteId(this.sshCommandExecutor.getDbsyncSenderId());
         this.applicationUpdateLogService.createEntity(newApplicationUpdateLog);
     }

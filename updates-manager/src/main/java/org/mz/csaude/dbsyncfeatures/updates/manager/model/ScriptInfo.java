@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.updates.manager.service.util;
+package org.mz.csaude.dbsyncfeatures.updates.manager.model;
 
 import java.util.List;
 

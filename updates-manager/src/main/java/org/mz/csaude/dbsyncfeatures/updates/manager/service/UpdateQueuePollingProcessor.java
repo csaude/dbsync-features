@@ -3,8 +3,8 @@ package org.mz.csaude.dbsyncfeatures.updates.manager.service;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
+import org.mz.csaude.dbsyncfeatures.updates.manager.model.ScriptInfo;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.UpdateQueue;
-import org.mz.csaude.dbsyncfeatures.updates.manager.service.util.ScriptInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
