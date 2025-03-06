@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -108,6 +109,7 @@ public class NotificationInfoSrc {
 		notificationInfo.setMailSiteOrigin(mailSiteOrigin);
 		notificationInfo.setSrcFolderPath(this.getNotificationContentPath());
 		notificationInfo.setMessageUuid(UUID.randomUUID().toString());
+		notificationInfo.setDateSent(new Date());
 
 		return notificationInfo;
 	}

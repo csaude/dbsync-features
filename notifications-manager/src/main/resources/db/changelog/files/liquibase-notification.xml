@@ -34,6 +34,37 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 				<constraints unique="true"/>
 			</column>
 		</createTable>
-
+	</changeSet>
+	<changeSet author="dchirinda" id="20250305-1100">
+		<addColumn tableName="email_notification_log">
+			<column name="mail_recipients"  type="VARCHAR(255)">
+			</column>
+		</addColumn>
+		<addColumn tableName="email_notification_log">
+			<column name="mail_content"  type="VARCHAR(255)">
+			</column>
+		</addColumn>
+		<addColumn tableName="email_notification_log">
+			<column name="attachement_name"  type="VARCHAR(255)">
+			</column>
+		</addColumn>
+		<addColumn tableName="email_notification_log">
+			<column name="mail_attachment"  type="TEXT">
+			</column>
+		</addColumn>
+		<addColumn tableName="email_notification_log">
+			<column name="mail_site_origin"  type="VARCHAR(255)">
+			</column>
+		</addColumn>
+		<addColumn tableName="email_notification_log">
+			<column name="email_sent" type="BOOLEAN">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	<changeSet author="dchirinda" id="20250305-1102">
+		<update tableName="email_notification_log">
+			<column name="email_sent" valueBoolean="true"/>
+		</update>
 	</changeSet>
 </databaseChangeLog>
