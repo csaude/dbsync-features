@@ -7,7 +7,8 @@ import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerCo
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
-import org.mz.csaude.dbsyncfeatures.updates.manager.model.UpdatedSite;
+import org.mz.csaude.dbsyncfeatures.updates.manager.model.ScriptExecutionStatus;
+import org.mz.csaude.dbsyncfeatures.updates.manager.model.UpdateReport;
 import org.mz.csaude.dbsyncfeatures.updates.manager.service.ApplicationUpdateLogService;
 import org.mz.csaude.dbsyncfeatures.updates.manager.service.RemoteSiteUpdateProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 @Component
@@ -51,24 +53,22 @@ public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
 					.process( exchange -> {
 						boolean executeScript = (boolean) exchange.getProperty("executeScript");
 
-						if(executeScript){
-							CustomMessageListenerContainer.enableAcknowledgement();
-							String fileName = exchange.getProperty("fileName", String.class);
+						CustomMessageListenerContainer.enableAcknowledgement();
+						String fileName = exchange.getProperty("fileName", String.class);
+						ScriptExecutionStatus status = exchange.getProperty("ScriptExecutionStatus", ScriptExecutionStatus.class);
+						Map<String, String> scriptExecutionState = null;
 
+						if(executeScript){
 							if (exchange.getException() == null) {
 								Logger.getAnonymousLogger().info("Executing update Script");
-								this.sshCommandExecutor.processBashCommand(sshCommandExecutor.getFilePath(), true);
+								scriptExecutionState = this.sshCommandExecutor.processBashCommand(sshCommandExecutor.getFilePath(), true);
 							}
-							Logger.getAnonymousLogger().info("Processing of remote site update finished.");
-
-							exchange.getMessage().setBody(this.createUpdateSiteLog(fileName));
-						}else{
-							CustomMessageListenerContainer.enableAcknowledgement();
-							exchange.getMessage().setBody(null);
 						}
+						exchange.getMessage().setBody(this.createUpdateSiteLog(executeScript, fileName, scriptExecutionState, status));
+						Logger.getAnonymousLogger().info("Processing of remote site update finished.");
 					})
 				.marshal()
-				.json(JsonLibrary.Jackson, UpdatedSite.class)
+				.json(JsonLibrary.Jackson, UpdateReport.class)
 				.to(successUpdateNotificationQueue)
 					.process( exchange -> {
 						Logger.getAnonymousLogger().info("Update process finalized.");
@@ -76,23 +76,35 @@ public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
 				.end();
 	}
 
-	public UpdatedSite createUpdateSiteLog(String fileName) throws JSchException, InterruptedException, IOException {
+	public UpdateReport createUpdateSiteLog(boolean executeScript, String fileName, Map<String, String> scriptExecutionState, ScriptExecutionStatus status) throws JSchException, InterruptedException, IOException {
 		String homeDir = this.sshCommandExecutor.getHomeDir();
-		UpdatedSite updateSiteLog = new UpdatedSite();
+		UpdateReport updateSiteLog = new UpdateReport();
 		String dbsyncVersion = this.getDbSyncVersion(homeDir + "/scripts/release_info.sh");
 
-		String scriptName = new File(fileName).getName().replaceAll("\\.sh$", "");
-		String logFilePath = this.sshCommandExecutor.getLogDir() + scriptName + "_execution.log";
+		if (scriptExecutionState != null) {
+			String logContent =  Utils.readFileContent(scriptExecutionState.get("logFile"));
+			updateSiteLog.setLog(logContent);
+			updateSiteLog.setExecuted(Objects.equals(scriptExecutionState.get("executionStatus"), "0"));
+		}
 
-		String logContent =  Utils.readFileContent(logFilePath);
 		updateSiteLog.setVersion(dbsyncVersion
 		);
 		updateSiteLog.setSiteId(this.sshCommandExecutor.getDbsyncSenderId());
-		updateSiteLog.setLog(logContent);
-		updateSiteLog.setExecuted(true);
+
 		updateSiteLog.setReceivedDate(new Date());
 		updateSiteLog.setScriptName(fileName);
 		updateSiteLog.setCreatedAt(new Date());
+
+		if  (executeScript) {
+			if(updateSiteLog.isExecuted()){
+				updateSiteLog.setExecutionStatus(ScriptExecutionStatus.SCRIPT_SUCCESSFULLY_EXECUTED);
+			} else {
+				updateSiteLog.setExecutionStatus(ScriptExecutionStatus.ERROR_TRYING_TO_EXECUTE_SCRIPT);
+			}
+		}else{
+			updateSiteLog.setExecutionStatus(status);
+		}
+
 		return updateSiteLog;
 	}
 
@@ -100,17 +112,16 @@ public class RemoteSiteUpdateProcessorRouter extends RouteBuilder {
 		String dbsyncVersion = null;
 		try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
 			String line;
-			while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null && dbsyncVersion == null) {
 				if (line.startsWith("export OPENMRS_EIP_APP_RELEASE_URL=")) {
 					dbsyncVersion = line.split("=")[1].replace("\"", "");
-					break;
 				}
 			}
 
 			return dbsyncVersion;
 		} catch (IOException e) {
 			Logger.getAnonymousLogger().info("Error while reading remote site dbsync version.");
-			return null;
+			return "Undetermined";
 		}
 	}
 }

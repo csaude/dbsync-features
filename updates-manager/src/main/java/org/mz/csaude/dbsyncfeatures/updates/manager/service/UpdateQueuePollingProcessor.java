@@ -29,8 +29,7 @@ public class UpdateQueuePollingProcessor implements Processor {
 
 
         if (updateQueue.getSitesToUpdatePath() == null && !updateQueue.isUpdateAll()) {
-            logger.info("No sites defined to update");
-            return;
+            throw new Exception("No sites defined to update");
         }
 
         // Validate if sitesToUpdate exists or as content
@@ -52,7 +51,7 @@ public class UpdateQueuePollingProcessor implements Processor {
         scriptInfo.setUpdateAll(updateQueue.isUpdateAll());
 
 
-        this.writeToFile(scriptInfo,  this.outPutFolder, getScriptFileName(updateQueue.getScriptPath()));
+        this.writeToFile(scriptInfo,  this.outPutFolder, generateScriptFileName(updateQueue.getScriptPath()));
     }
 
     private void writeToFile(ScriptInfo scriptInfo, String outPutFolder, String scriptFileName) {
@@ -61,7 +60,7 @@ public class UpdateQueuePollingProcessor implements Processor {
         Utils.writeObjectToFile(scriptInfo, file);
     }
 
-    private String getScriptFileName(String filePath) {
+    private String generateScriptFileName(String filePath) {
         Path path = Paths.get(filePath);
         return path.getFileName().toString();
     }

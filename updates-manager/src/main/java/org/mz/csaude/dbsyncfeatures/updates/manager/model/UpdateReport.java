@@ -7,13 +7,15 @@ import org.springframework.context.annotation.Profile;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "updated_site")
+@Table(name = "update_report")
 @Profile(ApplicationProfile.CENTRAL)
-public class UpdatedSite extends LifeCycle {
+public class UpdateReport extends LifeCycle {
     @NotNull
     @Column(name = "site_id", nullable = false)
     private String siteId;
@@ -33,11 +35,15 @@ public class UpdatedSite extends LifeCycle {
     @Column(name="received_date")
     private Date receivedDate;
 
-    public UpdatedSite(){
+    @Column(name = "execution_status")
+    @Enumerated(EnumType.STRING)
+    public ScriptExecutionStatus executionStatus;
+
+    public UpdateReport(){
 
     }
 
-    public UpdatedSite(String siteId, String version){
+    public UpdateReport(String siteId, String version){
         this.siteId = siteId;
         this.version = version;
         this.setCreatedAt(new Date());
@@ -89,5 +95,14 @@ public class UpdatedSite extends LifeCycle {
 
     public void setReceivedDate(Date receivedDate) {
         this.receivedDate = receivedDate;
+    }
+
+
+    public ScriptExecutionStatus getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public void setExecutionStatus(ScriptExecutionStatus executionStatus) {
+        this.executionStatus = executionStatus;
     }
 }

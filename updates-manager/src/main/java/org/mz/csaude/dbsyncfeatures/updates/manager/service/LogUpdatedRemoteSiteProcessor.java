@@ -4,7 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
-import org.mz.csaude.dbsyncfeatures.updates.manager.model.UpdatedSite;
+import org.mz.csaude.dbsyncfeatures.updates.manager.model.UpdateReport;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +12,19 @@ import org.springframework.stereotype.Service;
 @Profile(ApplicationProfile.CENTRAL)
 public class LogUpdatedRemoteSiteProcessor implements Processor {
 
-    private final UpdatedSiteService updatedSiteService;
+    private final UpdateReportService updateReportService;
 
-    public LogUpdatedRemoteSiteProcessor(UpdatedSiteService updatedSiteService) {
-        this.updatedSiteService = updatedSiteService;
+    public LogUpdatedRemoteSiteProcessor(UpdateReportService updateReportService) {
+        this.updateReportService = updateReportService;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
 
         String messageBody = exchange.getIn().getBody(String.class);
-        UpdatedSite updatedSite = Utils.fromJson(messageBody, UpdatedSite.class);
-        if (updatedSite != null){
-            this.updatedSiteService.createEntity(updatedSite);
+        UpdateReport updateReport = Utils.fromJson(messageBody, UpdateReport.class);
+        if (updateReport != null){
+            this.updateReportService.createEntity(updateReport);
         }
     }
 }
