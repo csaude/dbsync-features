@@ -8,6 +8,7 @@ import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ApplicationUpdateLog;
+import org.mz.csaude.dbsyncfeatures.updates.manager.model.ScriptExecutionStatus;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ScriptInfo;
 import org.mz.csaude.dbsyncfeatures.updates.manager.model.ShareRemoteUpdateFile;
 import org.slf4j.Logger;
@@ -45,33 +46,30 @@ public class RemoteSiteUpdateProcessor implements Processor {
         ApplicationUpdateLog applicationUpdateLog = applicationUpdateLogService.findByCurrentVersion(shareRemoteUpdateFile.getFileName());
 
         // Validate if the site is allowed to update
+        exchange.setProperty("executeScript", Boolean.FALSE);
         if (!scriptInfo.getSitesToUpdate().contains(this.sshCommandExecutor.getDbsyncSenderId())) {
             logger.info("The site {} is not allowed to be updated.", this.sshCommandExecutor.getDbsyncSenderId());
-            return;
+            exchange.setProperty("ScriptExecutionStatus", ScriptExecutionStatus.SITE_NOT_ALLOWED_TO_UPDATE);
         }
+        else if (applicationUpdateLog != null){
+            exchange.setProperty("ScriptExecutionStatus", ScriptExecutionStatus.SCRIPT_ALREADY_EXECUTED);
+        } else {
 
-        if (applicationUpdateLog != null){
-            exchange.setProperty("executeScript", Boolean.FALSE);
+            String updateFile = this.sshCommandExecutor.getHomeDir() + "/" + shareRemoteUpdateFile.getFileName();
 
-            return;
+            if (!Files.exists(Paths.get(updateFile))) {
+                Files.createFile(Paths.get(updateFile));
+            }
+
+            File file = new File(updateFile);
+            Files.write(file.toPath(), scriptInfo.getScriptData().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+            this.sshCommandExecutor.setFilePath(updateFile);
+            this.createApplicationUpdateLog(shareRemoteUpdateFile.getFileName());
+
+            exchange.setProperty("fileName", shareRemoteUpdateFile.getFileName());
+            exchange.setProperty("executeScript", Boolean.TRUE);
+            CustomMessageListenerContainer.enableAcknowledgement();
         }
-
-        String updateFile = this.sshCommandExecutor.getHomeDir() + "/" + shareRemoteUpdateFile.getFileName();
-
-        if(!Files.exists(Paths.get(updateFile))){
-            Files.createFile(Paths.get(updateFile));
-        }
-
-        File file = new File(updateFile);
-        Files.write(file.toPath(), scriptInfo.getScriptData().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
-        this.sshCommandExecutor.setFilePath(updateFile);
-
-        CustomMessageListenerContainer.enableAcknowledgement();
-
-        this.createApplicationUpdateLog(shareRemoteUpdateFile.getFileName());
-
-        exchange.setProperty("fileName", shareRemoteUpdateFile.getFileName());
-        exchange.setProperty("executeScript", Boolean.TRUE);
     }
 
     public void createApplicationUpdateLog(String fileName) throws JSchException, InterruptedException, IOException {

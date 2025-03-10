@@ -8,9 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -102,16 +100,8 @@ public class Utils {
 	}
 
 	public static String readFileContent(String filePath) throws IOException {
-		StringBuilder content = new StringBuilder();
-
-		try(BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-			String line;
-
-			while ((line = reader.readLine()) !=null){
-				content.append(line).append(System.lineSeparator());
-			}
-		}
-        return content.toString();
+		InputStream b = Files.newInputStream(Path.of(filePath));
+		return new String(IOUtils.toByteArray(b));
     }
 
 	public static void validateScriptFile(String filePath) throws IOException {
@@ -123,6 +113,6 @@ public class Utils {
 
 	public static <T> T fromBytes(byte[] bytes, Class<T> clazz) throws JsonProcessingException {
 		String json = new String(bytes, StandardCharsets.UTF_8);
-		return defaultJsonObjectMapper().readValue(json, clazz);
+		return loadObjectFormJSON(clazz,json);
 	}
 }

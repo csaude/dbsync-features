@@ -57,5 +57,13 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 			<column name="received_date" type="DATETIME(3)">
 			</column>
 		</addColumn>
+		<addColumn tableName="updated_site">
+			<column name="execution_status" type="VARCHAR(255)"/>
+		</addColumn>
+	</changeSet>
+	<changeSet author="dchirinda" id="20250310-1103">
+		<renameTable
+				oldTableName="updated_site"
+				newTableName="update_report"/>
 	</changeSet>
 </databaseChangeLog>

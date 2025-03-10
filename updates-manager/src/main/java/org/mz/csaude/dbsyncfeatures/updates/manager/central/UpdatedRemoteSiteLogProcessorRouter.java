@@ -4,7 +4,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.updates.manager.service.LogUpdatedRemoteSiteProcessor;
-import org.mz.csaude.dbsyncfeatures.updates.manager.service.UpdatedSiteService;
+import org.mz.csaude.dbsyncfeatures.updates.manager.service.UpdateReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -18,7 +18,7 @@ public class UpdatedRemoteSiteLogProcessorRouter extends RouteBuilder {
 	private String notificationsEndpoint;
 
 	@Autowired
-	private UpdatedSiteService updatedSiteService;
+	private UpdateReportService updateReportService;
 
 	@Override
 	public void configure() {
@@ -27,7 +27,7 @@ public class UpdatedRemoteSiteLogProcessorRouter extends RouteBuilder {
 
 		from(srcUri)
 				.routeId("updated-remote-site-log")
-				.process(new LogUpdatedRemoteSiteProcessor(updatedSiteService))
+				.process(new LogUpdatedRemoteSiteProcessor(updateReportService))
 				.to(dstUri)
 					.onCompletion()
 					.onCompleteOnly()

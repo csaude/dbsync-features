@@ -25,6 +25,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 				<constraints nullable="false"/>
 			</column>
 			<column name="description" type="VARCHAR(255)">
+				<constraints nullable="false" />
 			</column>
 			<column name="update_all" type="BOOLEAN">
 				<constraints nullable="false"/>

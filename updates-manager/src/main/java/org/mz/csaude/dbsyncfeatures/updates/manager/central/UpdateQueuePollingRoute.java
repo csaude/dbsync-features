@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+/***
+ * This route is responsible for selecting all the update report that has not be run
+ * in remote sites to process them and publish in artemis
+ */
 @Component
 @Profile(ApplicationProfile.CENTRAL)
 public class UpdateQueuePollingRoute extends RouteBuilder {
@@ -21,7 +25,7 @@ public class UpdateQueuePollingRoute extends RouteBuilder {
     public void configure() throws Exception {
         from("timer:pollDatabase?period=" + pollingInterval)
                 .routeId("update-queue-polling-route")
-                .to("jpa:UpdateQueue?query=SELECT u FROM UpdateQueue u WHERE u.processed = false")
+                .to("jpa:UpdateQueue?query=SELECT u FROM UpdateQueue u WHERE u.processed = false AND u.active = true")
                 .split(body()) // Process each record individually
                     .process(new UpdateQueuePollingProcessor(updateRootFolder))
                 .process((exchange) -> {

@@ -1,6 +1,5 @@
 package org.mz.csaude.dbsyncfeatures.core.manager.utils;
 
-import com.jcraft.jsch.JSchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Profile(ApplicationProfile.REMOTE)
@@ -65,36 +66,18 @@ public class SSHCommandExecutor {
     public String getDbsyncSenderId() {
         return dbsyncSenderId;
     }
-    public int processBashCommand(String scriptPath, boolean saveLOg) throws JSchException, InterruptedException {
-        return runShellScript(scriptPath,saveLOg);
-    }
-    public int runShellCommand(String shellCommand) throws JSchException, InterruptedException {
 
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sh", "-c", shellCommand);
-            processBuilder.redirectErrorStream(true);
+    public Map<String, String> processBashCommand(String scriptPath, boolean saveLog) {
 
-            Process process = processBuilder.start();
+        Map<String, String> result = new HashMap<>();
+        result.put("logFile", null);
+        result.put("executionStatus", null);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-
-            return process.waitFor();
-        } catch (IOException | InterruptedException e) {
-            logger.error("Error occurred executing this command: {}\n{}", shellCommand, e.getMessage());
-            return -1;
-        }
-    }
-
-    public int runShellScript(String scriptPath, boolean saveLog) {
-
-
+        File logFile = null;
         try {
             ProcessBuilder chmodProcessBuilder = new ProcessBuilder("chmod", "+x", scriptPath);
-            File logFile = getLogFile(saveLog);
+            logFile = generateLogFile(saveLog);
+            result.put("logFile", logFile.getAbsolutePath());
 
             Process chmodProcess = chmodProcessBuilder.start();
             InputStream errorStream = chmodProcess.getErrorStream();
@@ -102,13 +85,15 @@ public class SSHCommandExecutor {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                appendToLogFile(logFile, line);
             }
             int chmodExitCode = chmodProcess.waitFor();
 
             if (chmodExitCode != 0) {
-                System.out.println("Error making the script executable. Exit code: " + chmodExitCode);
-                return chmodExitCode;
+                result.put("executionStatus", String.valueOf(chmodExitCode));
+                appendToLogFile(logFile, "Error making the script executable. Exit code: " + chmodExitCode);
+
+                return result;
             }
 
             ProcessBuilder processBuilder = new ProcessBuilder("sh", "-c", scriptPath);
@@ -126,16 +111,19 @@ public class SSHCommandExecutor {
 
             outputThread.join();
             errorThread.join();
+            result.put("executionStatus", String.valueOf(exitCode));
 
-            return exitCode;
+            return result;
         } catch (IOException | InterruptedException e) {
-            logger.error("Error occurred executing the script : {}\n{}", scriptPath, e.getMessage());
+            appendToLogFile(logFile, "Error occurred executing the script : " + scriptPath +  "\\n"  + e.getMessage());
+            result.put("executionStatus", String.valueOf(1));
+
+            return result;
         }
-        return 1;
     }
 
 
-    private File getLogFile(boolean saveLog) throws IOException {
+    private File generateLogFile(boolean saveLog) throws IOException {
         File logFile = null;
 
         if(saveLog){
@@ -152,37 +140,48 @@ public class SSHCommandExecutor {
         }
         return logFile;
     }
+
+    public static void appendToLogFile(File logFile, String text) {
+        try (FileWriter writer = new FileWriter(logFile, true); // true = append mode
+             BufferedWriter bw = new BufferedWriter(writer)) {
+            bw.write(text);
+        } catch (IOException e) {
+            logger.error("Failed to append to log file: {}\n{}", logFile.getPath(), e.getMessage());
+        }
+    }
+
+
+
+    /**
+     * {@link org.mz.csaude.dbsyncfeatures.core.manager.utils.SSHCommandExecutor.ProcessOutputReader }
+     * Class that reads and process output streams from a shell script execution
+     * It's used to read success or error execution
+     */
+
     static class ProcessOutputReader implements Runnable {
-        private final java.io.InputStream inputStream;
+
+        // InputStream from which the script is read, success or error from a script execution
+        private final java.io.InputStream scriptExecutionOutput;
+
+        // Path of the log file to append the output
         private final File logFile;
 
         public ProcessOutputReader(InputStream inputStream, File logFile) {
-
-            this.inputStream = inputStream;
+            this.scriptExecutionOutput = inputStream;
             this.logFile = logFile;
-        }
-
-        private void appendToLogFile(File logFile, String text) {
-            try (FileWriter writer = new FileWriter(logFile, true); // true = append mode
-                 BufferedWriter bw = new BufferedWriter(writer)) {
-                bw.write(text);
-            } catch (IOException e) {
-                logger.error("Failed to append to log file: " + logFile.getPath() + "\n" + e.getMessage());
-            }
         }
 
         @Override
         public void run() {
-            try (java.util.Scanner scanner = new java.util.Scanner(inputStream).useDelimiter("\\A")) {
+            try (java.util.Scanner scanner = new java.util.Scanner(this.scriptExecutionOutput).useDelimiter("\\A")) {
                 while (scanner.hasNext()) {
                     if(this.logFile != null){
-                        this.appendToLogFile(this.logFile, scanner.next());
+                        appendToLogFile(this.logFile, scanner.next());
                     }else{
-                        System.out.print(scanner.next());
+                        logger.info(scanner.next());
                     }
-                }
-
                 }
             }
         }
+    }
 }
