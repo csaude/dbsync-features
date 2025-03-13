@@ -28,7 +28,7 @@ class CoreManagerTests {
 	@Test
 	public void processBashCommand_shouldLoginToEipAndExecuteUpdateCommand() throws IOException, MessagingException, JSchException, InterruptedException {
 		SSHCommandExecutor sshCommandExecutor = new SSHCommandExecutor();
-		sshCommandExecutor.processBashCommand("echo $system.user");
+		sshCommandExecutor.processBashCommand("echo $system.user", false);
 		//Assertions.assertNotNull(sshCommandExecutor);
 	}
 
