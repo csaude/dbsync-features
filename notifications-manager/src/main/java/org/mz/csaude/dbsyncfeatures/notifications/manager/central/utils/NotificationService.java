@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils;
 
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.EmailNotificationLog;

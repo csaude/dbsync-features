@@ -1,7 +1,8 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils.MailConfig;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.EmailNotificationLog;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -43,6 +44,6 @@ public class EmailNotificationPollingRouter extends RouteBuilder {
                     }
                 })
                 .to("jpa://EmailNotificationLog?useExecuteUpdate=true")
-                .log("The email of the site ${body.siteId} with subject ${body.subject} as been sent");
+                .log("The email of the site ${body.siteId} with subject ${body.subject} has been published");
     }
 }

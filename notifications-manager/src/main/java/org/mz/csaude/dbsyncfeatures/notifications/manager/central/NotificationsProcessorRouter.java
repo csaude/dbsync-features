@@ -4,7 +4,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.mz.csaude.dbsyncfeatures.core.manager.artemis.CustomMessageListenerContainer;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.service.EmailNotificationLogService;
-import org.mz.csaude.dbsyncfeatures.notifications.manager.utils.NotificationMessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;

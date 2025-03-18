@@ -3,7 +3,7 @@ package org.mz.csaude.dbsyncfeatures.notifications.manager.model;
 import com.sun.istack.NotNull;
 import org.mz.csaude.dbsyncfeatures.core.manager.entity.Base;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
-import org.mz.csaude.dbsyncfeatures.notifications.manager.utils.NotificationType;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils.NotificationType;
 import org.springframework.context.annotation.Profile;
 
 import javax.persistence.Column;

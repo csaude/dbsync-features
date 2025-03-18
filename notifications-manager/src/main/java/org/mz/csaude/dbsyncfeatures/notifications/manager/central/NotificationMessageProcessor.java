@@ -1,9 +1,10 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils.NotificationType;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.EmailNotificationLog;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.NotificationInfo;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.service.EmailNotificationLogService;

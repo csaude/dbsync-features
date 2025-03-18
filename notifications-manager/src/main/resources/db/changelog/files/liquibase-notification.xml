@@ -41,7 +41,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 			</column>
 		</addColumn>
 		<addColumn tableName="email_notification_log">
-			<column name="mail_content"  type="VARCHAR(255)">
+			<column name="mail_content"  type="VARCHAR">
 			</column>
 		</addColumn>
 		<addColumn tableName="email_notification_log">

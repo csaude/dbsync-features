@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils;
 
 import java.util.Properties;
 
