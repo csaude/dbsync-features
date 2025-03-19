@@ -62,7 +62,7 @@ public class NotificationMessageProcessor implements Processor {
 					notificationInfo.getMailSiteOrigin(), notificationInfo.getMailSubject());
 		}
 		catch (Exception e) {
-            log.error("An error occurred trying to process message: {}", e.getMessage());
+			throw new RuntimeException("An error occurred trying to process message: " +  e.getMessage());
 		}
 	}
 	
