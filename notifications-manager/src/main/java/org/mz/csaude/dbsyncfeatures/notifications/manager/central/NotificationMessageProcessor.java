@@ -1,12 +1,10 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.utils;
-
-import java.time.LocalDateTime;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.ApplicationProfile;
 import org.mz.csaude.dbsyncfeatures.core.manager.utils.Utils;
-import org.mz.csaude.dbsyncfeatures.notifications.manager.central.NotificationsProcessorRouter;
+import org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils.NotificationType;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.EmailNotificationLog;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.model.NotificationInfo;
 import org.mz.csaude.dbsyncfeatures.notifications.manager.service.EmailNotificationLogService;
@@ -15,18 +13,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 @Service
 @Profile(ApplicationProfile.CENTRAL)
 public class NotificationMessageProcessor implements Processor {
 	
-	private MailConfig mailConfig;
-	
+
 	private EmailNotificationLogService emailNotificationLogService;
 	
-	protected static final Logger log = LoggerFactory.getLogger(NotificationsProcessorRouter.class);
+	protected static final Logger log = LoggerFactory.getLogger(NotificationMessageProcessor.class);
 	
-	public NotificationMessageProcessor(MailConfig mailConfig, EmailNotificationLogService emailNotificationLogService) {
-		this.mailConfig = mailConfig;
+	public NotificationMessageProcessor(EmailNotificationLogService emailNotificationLogService) {
 		this.emailNotificationLogService = emailNotificationLogService;
 	}
 	
@@ -40,30 +40,30 @@ public class NotificationMessageProcessor implements Processor {
 			
 			NotificationInfo notificationInfo = Utils.fromJson(messageBody, NotificationInfo.class);
 			exchange.getIn().setBody(notificationInfo);
-			NotificationService notificationService = new NotificationService(this.mailConfig);
-			
+
 			EmailNotificationLog emailNotificationLog = new EmailNotificationLog();
 			emailNotificationLog.setMessageType(determineNotificationType(notificationInfo.getMailSubject()));
-			emailNotificationLog.setDateSent(LocalDateTime.now());
+			LocalDateTime dateSent = notificationInfo.getDateSent() != null
+					? notificationInfo.getDateSent().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime():
+					LocalDateTime.now();
+
+			emailNotificationLog.setDateSent( dateSent);
 			emailNotificationLog.setSubject(notificationInfo.getMailSubject());
 			emailNotificationLog.setSiteId(notificationInfo.getMailSiteOrigin());
 			emailNotificationLog.setMessageUuid(notificationInfo.getMessageUuid());
+			emailNotificationLog.setMailRecipients(notificationInfo.getMailRecipients());
+			emailNotificationLog.setMailContent(notificationInfo.getMailContent());
+			emailNotificationLog.setMailAttachment(new String(notificationInfo.getMailAttachment(), StandardCharsets.UTF_8));
+			emailNotificationLog.setAttachmentName(notificationInfo.getAttachmentName());
+			emailNotificationLog.setMailSiteOrigin(notificationInfo.getMailSiteOrigin());
 			emailNotificationLogService.createEntity(emailNotificationLog);
-			
-			notificationService.emailService(notificationInfo);
-			log.info("Notification Message for site: " + notificationInfo.getMailSiteOrigin() + "for type "
-			        + notificationInfo.getMailSubject() + " were delivered successfully to user");
-			exchange.setProperty("emailSent", true);
+
+            log.info("Notification Message for site: {}for type {} were saved successfully!",
+					notificationInfo.getMailSiteOrigin(), notificationInfo.getMailSubject());
 		}
 		catch (Exception e) {
-			exchange.setProperty("emailSent", false);
-			log.error("An error occurred trying to process message: " + e.getMessage());
-			
-			if (e.getCause() != null) {
-				log.error(e.getCause().toString());
-			}
+			throw new RuntimeException("An error occurred trying to process message: " +  e.getMessage());
 		}
-		
 	}
 	
 	NotificationType determineNotificationType(String notificationSubject) {
@@ -86,8 +86,6 @@ public class NotificationMessageProcessor implements Processor {
 		if (notificationSubject.startsWith("EIP REMOTO - RELATORIO DA HARMONIZACAO DE LOCAIS")) {
 			return NotificationType.LOCATION_HARMONIZATION_FINISHED;
 		}
-		
-		throw new RuntimeException("Unknown Message Type [" + notificationSubject + "]");
-		
+		return NotificationType.UNKNOWN_NOTIFICATION;
 	}
 }

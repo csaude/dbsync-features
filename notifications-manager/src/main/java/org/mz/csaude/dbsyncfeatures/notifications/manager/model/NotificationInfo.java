@@ -1,9 +1,10 @@
 package org.mz.csaude.dbsyncfeatures.notifications.manager.model;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
+import java.util.Date;
 
 public class NotificationInfo {
 	
@@ -22,6 +23,8 @@ public class NotificationInfo {
 	private String srcFolderPath;
 
 	private String messageUuid;
+
+	private Date dateSent;
 	
 	public NotificationInfo() {
 	}
@@ -102,5 +105,13 @@ public class NotificationInfo {
 		if (srcDir.exists()) {
 			FileUtils.deleteDirectory(srcDir);
 		}
+	}
+
+	public Date getDateSent() {
+		return dateSent;
+	}
+
+	public void setDateSent(Date dateSent) {
+		this.dateSent = dateSent;
 	}
 }

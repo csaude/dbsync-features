@@ -51,9 +51,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 			</column>
 		</addColumn>
 		<addColumn tableName="updated_site">
-			<column name="log" type="TEXT">
-				<constraints nullable="false" />
-			</column>
+			<column name="log" type="TEXT"/>
 		</addColumn>
 		<addColumn tableName="updated_site">
 			<column name="received_date" type="DATETIME(3)">

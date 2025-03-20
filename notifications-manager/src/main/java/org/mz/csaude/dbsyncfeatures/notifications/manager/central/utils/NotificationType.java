@@ -1,4 +1,4 @@
-package org.mz.csaude.dbsyncfeatures.notifications.manager.utils;
+package org.mz.csaude.dbsyncfeatures.notifications.manager.central.utils;
 
 
 public enum NotificationType {
@@ -7,5 +7,6 @@ public enum NotificationType {
 	LIQUIBASE_UNLOCK,
 	DBSYNC_SHUTDOWN,
 	LOCATION_HARMONIZATION_STARTED,
-	LOCATION_HARMONIZATION_FINISHED
+	LOCATION_HARMONIZATION_FINISHED,
+	UNKNOWN_NOTIFICATION
 }
