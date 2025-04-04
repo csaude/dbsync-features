@@ -23,6 +23,7 @@ import java.util.Map;
 public class SSHCommandExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(SSHCommandExecutor.class);
+    private static final String loDirectory = "/home/eip/logs/automatic-updates/";
 
     @Value("${db-sync.senderId}")
     private String dbsyncSenderId;
@@ -32,7 +33,7 @@ public class SSHCommandExecutor {
 
     private String filePath;
 
-    @Value("${log.dir}")
+    // @Value("${log.dir}")
     private String logDir;
 
     public String getFilePath() {
@@ -128,7 +129,7 @@ public class SSHCommandExecutor {
 
         if(saveLog){
             String scriptName = new File(filePath).getName().replaceAll("\\.sh$", "");
-            String logFilePath = this.logDir + scriptName + "_execution.log";
+            String logFilePath = SSHCommandExecutor.loDirectory + scriptName + "_execution.log";
 
             if(!Files.exists(Paths.get(logFilePath))){
                 if (Files.notExists(Paths.get(this.logDir))){

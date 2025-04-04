@@ -41,7 +41,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 			</column>
 		</addColumn>
 		<addColumn tableName="email_notification_log">
-			<column name="mail_content"  type="VARCHAR">
+			<column name="mail_content"  type="TEXT">
 			</column>
 		</addColumn>
 		<addColumn tableName="email_notification_log">
@@ -66,5 +66,17 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 		<update tableName="email_notification_log">
 			<column name="email_sent" valueBoolean="true"/>
 		</update>
+	</changeSet>
+	<changeSet id="20250305-1103" author="dchirinda">
+		<modifyDataType
+				tableName="email_notification_log"
+				columnName="mail_attachment"
+				newDataType="LONGTEXT"/>
+	</changeSet>
+	<changeSet id="20250305-1104" author="dchirinda">
+		<modifyDataType
+				tableName="email_notification_log"
+				columnName="mail_recipients"
+				newDataType="LONGTEXT"/>
 	</changeSet>
 </databaseChangeLog>
