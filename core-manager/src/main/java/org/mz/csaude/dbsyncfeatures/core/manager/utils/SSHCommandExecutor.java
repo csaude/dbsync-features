@@ -33,8 +33,7 @@ public class SSHCommandExecutor {
 
     private String filePath;
 
-    // @Value("${log.dir}")
-    private String logDir;
+
 
     public String getFilePath() {
         return filePath;
@@ -54,14 +53,6 @@ public class SSHCommandExecutor {
 
     public void setHomeDir(String homeDir) {
         this.homeDir = homeDir;
-    }
-
-    public String getLogDir() {
-        return logDir;
-    }
-
-    public void setLogDir(String logDir) {
-        this.logDir = logDir;
     }
 
     public String getDbsyncSenderId() {
@@ -132,8 +123,8 @@ public class SSHCommandExecutor {
             String logFilePath = SSHCommandExecutor.loDirectory + scriptName + "_execution.log";
 
             if(!Files.exists(Paths.get(logFilePath))){
-                if (Files.notExists(Paths.get(this.logDir))){
-                    Files.createDirectory(Paths.get(this.logDir));
+                if (Files.notExists(Paths.get(SSHCommandExecutor.loDirectory))){
+                    Files.createDirectory(Paths.get(SSHCommandExecutor.loDirectory));
                 }
                 Files.createFile(Paths.get(logFilePath));
             }
